@@ -27,7 +27,7 @@ workflows:
 
             bitrise plugin install \
               --source "file://." \
-              --bin-source "file://$DEPLOY_PATH"
+              --bin-source "file://$OSX_DEPLOY_PATH"
     - script:
         title: Plugin test
         inputs:
@@ -36,7 +36,7 @@ workflows:
             set -ex
 
             echo "Analytics version:"
-            version=$(bitrise :$PLUGIN_NAME -v)
+            version=$(bitrise :$BIN_NAME -v)
             echo $version
 
             if [ "$version" != "$RELEASE_VERSION" ] ; then
@@ -44,7 +44,7 @@ workflows:
             fi
 
             echo "Turn analytics on:"
-            bitrise :$PLUGIN_NAME on
+            bitrise :$BIN_NAME on
 
             bitrise run run_test
     
