@@ -3,11 +3,12 @@ default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
 app:
   envs:
+  - RELEASE_VERSION: 0.9.3
   - PLUGIN_NAME: analytics
-  - PLUGIN_GO_PATH: "./go/src/github.com/bitrise-core/bitrise-plugins-analytics"
-  - VERSION_FILE_PATH: "./go/src/github.com/bitrise-core/bitrise-plugins-analytics/version/version.go"
 
 workflows:
+  # ----------------------------------------------------------------
+  # --- workflows for CI and testing
   test:
     before_run:
     - create-bin
@@ -35,6 +36,8 @@ workflows:
             echo "Turn analytics on:"
             bitrise :$PLUGIN_NAME on
 
+  # ----------------------------------------------------------------
+  # --- workflows for Releasing
   create-bin:
     steps:
     - script:
@@ -57,17 +60,13 @@ workflows:
             export GOOS=darwin
             deploy_pth="$current_dir/_bin/$PLUGIN_NAME-$OS-$ARCH"
 
-            cd $PLUGIN_GO_PATH
             go build -o "$deploy_pth"
-            cd -
 
             export OS=Linux
             export GOOS=linux
             deploy_pth="$current_dir/_bin/$PLUGIN_NAME-$OS-$ARCH"
 
-            cd $PLUGIN_GO_PATH
             go build -o "$deploy_pth"
-            cd -
 
             current_bin_path="$current_dir/_bin/$PLUGIN_NAME-$(uname -s)-$(uname -m)"
             echo "current_bin_path: $current_bin_path"
@@ -84,18 +83,27 @@ workflows:
             set -e
 
             export CI=true
-            releaseman create --bump-version patch
+            releaseman create \
+              --version $RELEASE_VERSION \
+              --set-version-script "bash _scripts/set_version.sh version/version.go"
 
-  create-release-version:
-    envs:
-    - RELEASE_VERSION: 0.9.3
+  # ----------------------------------------------------------------
+  # --- workflows for Utility
+  godeps-update:
+    title: Godeps update
+    description: |
+      Used for updating bitrise dependencies with godep
     steps:
     - script:
-        title:
+        title: Dependency update
         inputs:
         - content: |
             #!/bin/bash
-            set -e
+            set -ex
+            go get -u -v github.com/tools/godep
 
-            export CI=true
-            releaseman create --version $RELEASE_VERSION
+            rm -rf ./Godeps
+            rm -rf ./vendor
+
+            go get -t -d ./...
+            godep save ./...
