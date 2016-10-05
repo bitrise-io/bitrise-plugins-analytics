@@ -4,20 +4,25 @@ default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 app:
   envs:
   - RELEASE_VERSION: 0.9.3
-  - PLUGIN_NAME: analytics
+  - BIN_NAME: analytics
 
 workflows:
   # ----------------------------------------------------------------
   # --- workflows for CI and testing
   test:
     before_run:
-    - create-bin
+    - create_binaries
     steps:
     - script:
         title: Install plugin
         inputs:
         - content: |
             #!/bin/bash
+
+            set -x
+
+            bitrise plugin delete analytics
+
             set -e
 
             bitrise plugin install \
@@ -28,50 +33,75 @@ workflows:
         inputs:
         - content: |
             #!/bin/bash
-            set -e
+            set -ex
 
             echo "Analytics version:"
-            bitrise :$PLUGIN_NAME -v
+            version=$(bitrise :$PLUGIN_NAME -v)
+            echo $version
+
+            if [ "$version" != "$RELEASE_VERSION" ] ; then
+              exit 1
+            fi
 
             echo "Turn analytics on:"
             bitrise :$PLUGIN_NAME on
 
-  # ----------------------------------------------------------------
-  # --- workflows for Releasing
-  create-bin:
+            bitrise run run_test
+    
+  run_test:
     steps:
     - script:
-        title: Generate bin
+        inputs:
+        - content: echo "Hello bitrise"
+
+  # ----------------------------------------------------------------
+  # --- workflows for Releasing
+  create_binaries:
+    title: Create binaries
+    description: |
+        Creates Linux and Darwin binaries
+    steps:
+    - script:
+        title: Create binaries
         inputs:
         - content: |
             #!/bin/bash
-
             set -e
+            set -x
 
-            # Create bins
-            rm -rf ./_bin/tmp-bins/
-
-            current_dir=$(pwd)
+            echo
+            echo "Create final binaries"
+            echo "  Build number: $BITRISE_BUILD_NUMBER"
 
             export ARCH=x86_64
             export GOARCH=amd64
 
+            # Create Darwin bin
             export OS=Darwin
             export GOOS=darwin
-            deploy_pth="$current_dir/_bin/$PLUGIN_NAME-$OS-$ARCH"
 
-            go build -o "$deploy_pth"
+            DEPLOY_PATH="_bin/$BIN_NAME-$OS-$ARCH"
+            echo "  Create final Darwin binary at: $DEPLOY_PATH"
 
+            go build -o "$DEPLOY_PATH"
+
+            envman add --key OSX_DEPLOY_PATH --value $DEPLOY_PATH
+            cp $DEPLOY_PATH $BITRISE_DEPLOY_DIR/$BIN_NAME-$OS-$ARCH
+            echo "  Copy final Darwin binary to: $BITRISE_DEPLOY_DIR/$BIN_NAME-$OS-$ARCH"
+
+
+            # Create Linux binary
             export OS=Linux
             export GOOS=linux
-            deploy_pth="$current_dir/_bin/$PLUGIN_NAME-$OS-$ARCH"
 
-            go build -o "$deploy_pth"
+            DEPLOY_PATH="_bin/$BIN_NAME-$OS-$ARCH"
+            echo "  Create final Linux binary at: $DEPLOY_PATH"
 
-            current_bin_path="$current_dir/_bin/$PLUGIN_NAME-$(uname -s)-$(uname -m)"
-            echo "current_bin_path: $current_bin_path"
+            go build -o "$DEPLOY_PATH"
 
-            envman add --key DEPLOY_PATH --value $current_bin_path
+            envman add --key LINUX_DEPLOY_PATH --value $DEPLOY_PATH
+            cp $DEPLOY_PATH $BITRISE_DEPLOY_DIR/$BIN_NAME-$OS-$ARCH
+            echo "  Copy final Linux binary to: $BITRISE_DEPLOY_DIR/$BIN_NAME-$OS-$ARCH"
 
   create-release:
     steps:
