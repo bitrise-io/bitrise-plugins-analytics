@@ -13,8 +13,8 @@
 		},
 		{
 			"ImportPath": "github.com/bitrise-io/bitrise/models",
-			"Comment": "1.5.6-11-gfc69c58",
-			"Rev": "fc69c5817547f2eab5a85079b70179d6bfd01d17"
+			"Comment": "1.5.6-14-gc4039d0",
+			"Rev": "c4039d09190ce5b70338a7854543bcca2e2b7baf"
 		},
 		{
 			"ImportPath": "github.com/bitrise-io/envman/models",
@@ -27,6 +27,10 @@
 		},
 		{
 			"ImportPath": "github.com/bitrise-io/go-utils/fileutil",
+			"Rev": "c8163959178ae89a3829ce02e485eef6b2befd22"
+		},
+		{
+			"ImportPath": "github.com/bitrise-io/go-utils/log",
 			"Rev": "c8163959178ae89a3829ce02e485eef6b2befd22"
 		},
 		{
@@ -50,6 +54,10 @@
 			"ImportPath": "github.com/codegangsta/cli",
 			"Comment": "v1.19.1-36-gd70f47e",
 			"Rev": "d70f47eeca3afd795160003bc6e28b001d60c67c"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/go-version",
+			"Rev": "03c5bf6be031b6dd45afec16b1cf94fc8938bc77"
 		},
 		{
 			"ImportPath": "github.com/ryanuber/go-glob",
