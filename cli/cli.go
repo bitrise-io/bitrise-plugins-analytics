@@ -20,13 +20,11 @@ import (
 //=======================================
 
 const (
-	pluginInputPayloadKey        = "BITRISE_PLUGIN_INPUT_PAYLOAD"
-	pluginInputBitriseVersionKey = "BITRISE_PLUGIN_INPUT_BITRISE_VERSION"
-	pluginInputTriggerEventKey   = "BITRISE_PLUGIN_INPUT_TRIGGER"
-	pluginInputPluginModeKey     = "BITRISE_PLUGIN_INPUT_PLUGIN_MODE"
-	pluginInputDataDirKey        = "BITRISE_PLUGIN_INPUT_DATA_DIR"
-	pluginInputFormatVersionKey  = "BITRISE_PLUGIN_INPUT_FORMAT_VERSION"
-	cIModeKey                    = "CI"
+	pluginInputPayloadKey       = "BITRISE_PLUGIN_INPUT_PAYLOAD"
+	pluginInputPluginModeKey    = "BITRISE_PLUGIN_INPUT_PLUGIN_MODE"
+	pluginInputDataDirKey       = "BITRISE_PLUGIN_INPUT_DATA_DIR"
+	pluginInputFormatVersionKey = "BITRISE_PLUGIN_INPUT_FORMAT_VERSION"
+	cIModeKey                   = "CI"
 )
 
 const (

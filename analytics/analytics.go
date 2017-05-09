@@ -9,6 +9,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/bitrise-core/bitrise-plugins-analytics/configs"
+	models "github.com/bitrise-io/bitrise/models"
 )
 
 //=======================================
@@ -35,31 +36,12 @@ type AnonymizedUsageGroupModel struct {
 	Steps []AnonymizedUsageModel `json:"steps"`
 }
 
-// BuildRunResultsModel ...
-type BuildRunResultsModel struct {
-	SuccessSteps         []StepRunResultsModel `json:"SuccessSteps"`
-	FailedSteps          []StepRunResultsModel `json:"FailedSteps"`
-	FailedSkippableSteps []StepRunResultsModel `json:"FailedSkippableSteps"`
-	SkippedSteps         []StepRunResultsModel `json:"SkippedSteps"`
-}
-
-// StepRunResultsModel ...
-type StepRunResultsModel struct {
-	StepInfo struct {
-		ID      string `json:"step_id"`
-		Version string `json:"step_version"`
-	}
-	RunTime time.Duration `json:"RunTime"`
-	Status  int           `json:"Status"`
-	Idx     int           `json:"Idx"`
-}
-
 //=======================================
 // Main
 //=======================================
 
 // SendAnonymizedAnalytics ...
-func SendAnonymizedAnalytics(buildRunResults BuildRunResultsModel) error {
+func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error {
 	stepRunResults := buildRunResults.SuccessSteps
 	stepRunResults = append(stepRunResults, buildRunResults.FailedSteps...)
 	stepRunResults = append(stepRunResults, buildRunResults.FailedSkippableSteps...)
@@ -78,12 +60,7 @@ func SendAnonymizedAnalytics(buildRunResults BuildRunResultsModel) error {
 		anonymizedUsageGroup.Steps = append(anonymizedUsageGroup.Steps, anonymizedUsageData)
 	}
 
-	data, err := json.MarshalIndent(anonymizedUsageGroup, "", "\t")
-	if err != nil {
-		return err
-	}
-
-	data, err = json.Marshal(anonymizedUsageGroup)
+	data, err := json.Marshal(anonymizedUsageGroup)
 	if err != nil {
 		return err
 	}
