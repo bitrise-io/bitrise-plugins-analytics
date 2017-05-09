@@ -24,13 +24,10 @@ const (
 	pluginInputPluginModeKey     = "BITRISE_PLUGIN_INPUT_PLUGIN_MODE"
 	pluginInputDataDirKey        = "BITRISE_PLUGIN_INPUT_DATA_DIR"
 	cIModeKey                    = "CI"
-
-	bitrisePluginOutputEnvKey = "BITRISE_PLUGIN_OUTPUT"
 )
 
 const (
 	triggerMode PluginMode = "trigger"
-	commandMode PluginMode = "command"
 )
 
 // PluginMode ...
@@ -137,7 +134,10 @@ func action(c *cli.Context) {
 			log.Fatalf("Failed to send analytics, error: %s", err)
 		}
 	} else {
-		cli.ShowAppHelp(c)
+		if err := cli.ShowAppHelp(c); err != nil {
+			log.Errorf("Failed to show help, error: %s", err)
+			os.Exit(1)
+		}
 	}
 }
 

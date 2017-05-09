@@ -99,8 +99,5 @@ func SetAnalytics(enabled bool) error {
 
 	config.IsAnalyticsDisabled = !enabled
 
-	if err := saveConfig(config); err != nil {
-		return err
-	}
-	return nil
+	return saveConfig(config)
 }

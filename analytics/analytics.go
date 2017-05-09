@@ -82,7 +82,6 @@ func SendAnonymizedAnalytics(buildRunResults BuildRunResultsModel) error {
 	if err != nil {
 		return err
 	}
-	log.Debugf("data:\n%s", string(data))
 
 	data, err = json.Marshal(anonymizedUsageGroup)
 	if err != nil {
