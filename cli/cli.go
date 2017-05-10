@@ -6,33 +6,18 @@ import (
 	"os"
 	"path"
 
+	"github.com/pkg/errors"
+
 	"github.com/bitrise-core/bitrise-plugins-analytics/analytics"
 	"github.com/bitrise-core/bitrise-plugins-analytics/configs"
 	"github.com/bitrise-core/bitrise-plugins-analytics/version"
-	models "github.com/bitrise-io/bitrise/models"
+	bitriseConfigs "github.com/bitrise-io/bitrise/configs"
+	"github.com/bitrise-io/bitrise/models"
+	"github.com/bitrise-io/bitrise/plugins"
 	log "github.com/bitrise-io/go-utils/log"
 	"github.com/codegangsta/cli"
 	ver "github.com/hashicorp/go-version"
 )
-
-//=======================================
-// Variables
-//=======================================
-
-const (
-	pluginInputPayloadKey       = "BITRISE_PLUGIN_INPUT_PAYLOAD"
-	pluginInputPluginModeKey    = "BITRISE_PLUGIN_INPUT_PLUGIN_MODE"
-	pluginInputDataDirKey       = "BITRISE_PLUGIN_INPUT_DATA_DIR"
-	pluginInputFormatVersionKey = "BITRISE_PLUGIN_INPUT_FORMAT_VERSION"
-	cIModeKey                   = "CI"
-)
-
-const (
-	triggerMode PluginMode = "trigger"
-)
-
-// PluginMode ...
-type PluginMode string
 
 var commands = []cli.Command{
 	cli.Command{
@@ -56,42 +41,48 @@ func printVersion(c *cli.Context) {
 }
 
 func before(c *cli.Context) error {
-	configs.DataDir = os.Getenv(pluginInputDataDirKey)
-	configs.IsCIMode = (os.Getenv(cIModeKey) == "true")
+	configs.DataDir = os.Getenv(plugins.PluginInputDataDirKey)
+	configs.IsCIMode = (os.Getenv(bitriseConfigs.CIModeEnvKey) == "true")
 
 	return nil
 }
 
+func ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr string) (string, error) {
+	if hostBitriseFormatVersionStr == "" {
+		return "This analytics plugin version would need bitrise-cli version >= 1.6.0 to submit analytics", nil
+	}
+
+	hostBitriseFormatVersion, err := ver.NewVersion(hostBitriseFormatVersionStr)
+	if err != nil {
+		return "", errors.Errorf("Failed to parse bitrise format version (%s), error: %s", hostBitriseFormatVersionStr, err)
+	}
+
+	pluginFormatVersion, err := ver.NewVersion(pluginFormatVersionStr)
+	if err != nil {
+		return "", errors.Errorf("Failed to parse analytics plugin format version (%s), error: %s", pluginFormatVersionStr, err)
+	}
+
+	if pluginFormatVersion.LessThan(hostBitriseFormatVersion) {
+		return "Outdated analytics plugin, used format version is lower then host bitrise-cli's format version, please update the plugin", nil
+	} else if pluginFormatVersion.GreaterThan(hostBitriseFormatVersion) {
+		return "Outdated bitrise-cli, used format version is lower then the analytics plugin's format version, please update the bitrise-cli", nil
+	}
+
+	return "", nil
+}
+
 func action(c *cli.Context) {
-	pluginMode := os.Getenv(pluginInputPluginModeKey)
-	if pluginMode == string(triggerMode) {
+	pluginMode := os.Getenv(plugins.PluginInputPluginModeKey)
+	if pluginMode == string(plugins.TriggerMode) {
 		// ensure plugin's format version matches to host bitrise-cli's format version
-		hostBitriseFormatVersionStr := os.Getenv(pluginInputFormatVersionKey)
-		pluginBitriseFormatVersionStr := models.Version
+		hostBitriseFormatVersionStr := os.Getenv(plugins.PluginInputFormatVersionKey)
+		pluginFormatVersionStr := models.Version
 
-		if hostBitriseFormatVersionStr == "" {
-			log.Warnf("This analytics plugin version would need bitrise-cli version >= 1.6.0 to submit analytics")
-			return
-		}
-
-		hostBitriseFormatVersion, err := ver.NewVersion(hostBitriseFormatVersionStr)
-		if err != nil {
-			log.Errorf("Failed to parse bitrise format version (%s), error: %s", hostBitriseFormatVersionStr, err)
+		if warn, err := ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr); err != nil {
+			log.Errorf(err.Error())
 			os.Exit(1)
-		}
-
-		pluginBitriseFormatVersion, err := ver.NewVersion(pluginBitriseFormatVersionStr)
-		if err != nil {
-			log.Errorf("Failed to parse analytics plugin format version (%s), error: %s", pluginBitriseFormatVersionStr, err)
-			os.Exit(1)
-		}
-
-		if pluginBitriseFormatVersion.LessThan(hostBitriseFormatVersion) {
-			log.Warnf("Outdated analytics plugin, used format version is lower then host bitrise-cli's format version, please update the plugin")
-			return
-		} else if pluginBitriseFormatVersion.GreaterThan(hostBitriseFormatVersion) {
-			log.Warnf("Outdated bitrise-cli, used format version is lower then the analytics plugin's format version, please update the bitrise-cli")
-			return
+		} else if warn != "" {
+			log.Warnf(warn)
 		}
 		// ---
 
@@ -105,7 +96,8 @@ func action(c *cli.Context) {
 			return
 		}
 
-		payload := os.Getenv(pluginInputPayloadKey)
+		payload := os.Getenv(plugins.PluginInputPayloadKey)
+
 		var buildRunResults models.BuildRunResultsModel
 		if err := json.Unmarshal([]byte(payload), &buildRunResults); err != nil {
 			log.Errorf("Failed to parse plugin input (%s), error: %s", payload, err)

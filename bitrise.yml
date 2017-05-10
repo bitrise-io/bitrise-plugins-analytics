@@ -12,6 +12,8 @@ workflows:
   test:
     before_run:
     - go-test
+    after_run:
+    - integration-test
     steps:
     - script:
         title: Print go environment
@@ -87,6 +89,32 @@ workflows:
         title: Go test
         inputs:
         - content: go test ./...
+
+  integration-test:
+    steps:
+    - script:
+        title: Go build
+        inputs:
+        - content: |-
+            #!/bin/bash
+            set -ex
+
+            # build the new bitrise-plugins-analytics
+            current_dir=$(pwd)
+            current_bin=$current_dir/_tmp/${BIN_NAME}
+            go build -o $current_bin
+
+            envman add --key CURRENT_BIN --value $current_bin
+    - script:
+        title: Run integration tests
+        inputs:
+        - content: |-
+            #!/bin/bash
+            echo "Running integration tests ..."
+            set -ex
+
+            export INTEGRATION_TEST_BINARY_PATH="$CURRENT_BIN"
+            go test -v ./_tests/integration/...
 
   _install_testing_tools:
     title: Install testing tools
@@ -223,15 +251,11 @@ workflows:
             go get -u -v github.com/bitrise-io/envman/models
             go get -u -v github.com/bitrise-io/stepman/models
             go get -u -v github.com/ryanuber/go-glob
+            go get -u -v github.com/davecgh/go-spew/spew
+            go get -u -v github.com/pmezard/go-difflib/difflib
 
             rm -rf ./Godeps
             rm -rf ./vendor
 
             go get -t -d ./...
             godep save ./...
-
-  analytics_test:
-    steps:
-    - script:
-        inputs:
-        - content: sleep 10
