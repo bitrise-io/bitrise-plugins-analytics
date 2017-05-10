@@ -54,7 +54,7 @@ func ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr str
 
 	hostBitriseFormatVersion, err := ver.NewVersion(hostBitriseFormatVersionStr)
 	if err != nil {
-		return "", errors.Errorf("Failed to parse bitrise format version (%s), error: %s", hostBitriseFormatVersionStr, err)
+		return "", errors.Wrapf(err, "Failed to parse bitrise format version (%s)", hostBitriseFormatVersionStr)
 	}
 
 	pluginFormatVersion, err := ver.NewVersion(pluginFormatVersionStr)
