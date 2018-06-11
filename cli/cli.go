@@ -37,7 +37,7 @@ var commands = []cli.Command{
 //=======================================
 
 func printVersion(c *cli.Context) {
-	fmt.Fprintf(c.App.Writer, "%v\n", c.App.Version)
+	fmt.Println(c.App.Version)
 }
 
 func before(c *cli.Context) error {
