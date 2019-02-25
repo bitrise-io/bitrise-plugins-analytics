@@ -20,7 +20,7 @@ const (
 	StepRunStatusCodeSkippedWithRunIf = 4
 
 	// Version ...
-	Version = "6"
+	Version = "7"
 )
 
 // StepListItemModel ...
@@ -121,4 +121,12 @@ type StepRunResultsModel struct {
 	RunTime  time.Duration               `json:"run_time" yaml:"run_time"`
 	ErrorStr string                      `json:"error_str" yaml:"error_str"`
 	ExitCode int                         `json:"exit_code" yaml:"exit_code"`
+}
+
+// TestResultStepInfo ...
+type TestResultStepInfo struct {
+	ID      string `json:"id" yaml:"id"`
+	Version string `json:"version" yaml:"version"`
+	Title   string `json:"title" yaml:"title"`
+	Number  int    `json:"number" yaml:"number"`
 }

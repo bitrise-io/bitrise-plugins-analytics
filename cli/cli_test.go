@@ -5,10 +5,9 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/bitrise-io/go-utils/fileutil"
-
 	"github.com/bitrise-io/bitrise/models"
 	"github.com/bitrise-io/go-utils/command/git"
+	"github.com/bitrise-io/go-utils/fileutil"
 	"github.com/bitrise-io/go-utils/pathutil"
 )
 
