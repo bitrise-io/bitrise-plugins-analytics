@@ -69,6 +69,14 @@
   version = "v1.20.0"
 
 [[projects]]
+  digest = "1:2f7f7dc60a1e4160196e4ba7e773ace2ffd874fedcc4e79682863892d6362e1f"
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  pruneopts = "U"
+  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
+  version = "v1.1.1"
+
+[[projects]]
   branch = "master"
   digest = "1:b759103c9b4135568253c17d2866064cde398e93764b611caabf5aa8e3059685"
   name = "github.com/hashicorp/go-version"
@@ -93,12 +101,31 @@
   revision = "856c240a51a2bf8fb8269ea7f3f9b046aadde36e"
 
 [[projects]]
+  digest = "1:97f2e3987902ab89b6fe5cff761b3b318aed6fb3c0d9cc31986073e7fae2444a"
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  pruneopts = "U"
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   digest = "1:4244255905cb95c3c98894d671367f84a6292608ae528936fe46ba9c86f68393"
   name = "github.com/ryanuber/go-glob"
   packages = ["."]
   pruneopts = "U"
   revision = "51a8f68e6c24dc43f1e371749c89a267de4ebc53"
+
+[[projects]]
+  digest = "1:0af906014558b21f854debfbe0367c2f8acc217b488ed30cc65556089b6dd631"
+  name = "github.com/stretchr/testify"
+  packages = [
+    "assert",
+    "require",
+  ]
+  pruneopts = "U"
+  revision = "ffdc059bfe9ce6a4e144ba849dbedead332c6053"
+  version = "v1.3.0"
 
 [[projects]]
   branch = "master"
@@ -142,6 +169,7 @@
     "github.com/codegangsta/cli",
     "github.com/hashicorp/go-version",
     "github.com/pkg/errors",
+    "github.com/stretchr/testify/require",
     "gopkg.in/yaml.v2",
   ]
   solver-name = "gps-cdcl"
