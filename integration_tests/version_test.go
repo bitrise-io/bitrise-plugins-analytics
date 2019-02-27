@@ -15,7 +15,7 @@ func Test_VersionTest(t *testing.T) {
 		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
 		require.NoError(t, err)
 
-		cmd := command.New(binPath(), "--version")
+		cmd := command.New(binPth, "--version")
 		cmd.SetDir(tmpDir)
 		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
 		require.NoError(t, err, out)
@@ -27,7 +27,7 @@ func Test_VersionTest(t *testing.T) {
 		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
 		require.NoError(t, err)
 
-		cmd := command.New(binPath(), "-v")
+		cmd := command.New(binPth, "-v")
 		cmd.SetDir(tmpDir)
 		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
 		require.NoError(t, err, out)

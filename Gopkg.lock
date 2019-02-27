@@ -3,11 +3,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:1095190b9aede3d5789679f0459a4a0833e331f291ea67acf9b9c020a8c86cad"
+  digest = "1:43fb96f5fe7c4563ba195c4110a2d5fa4e87217dc88cb401d65adb041ddcba70"
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
   pruneopts = "UT"
-  revision = "4f5fd631f16452fbd023813c1eb7dbd67130cb0c"
+  revision = "fa3c1df5136d05b1b54b72794cf89579f2b39f7b"
 
 [[projects]]
   branch = "master"
@@ -61,12 +61,12 @@
   revision = "9a9514dd0aa576d51fffbd997d9b37d1660f4dd7"
 
 [[projects]]
-  digest = "1:b24d38b282bacf9791408a080f606370efa3d364e4b5fd9ba0f7b87786d3b679"
+  branch = "master"
+  digest = "1:8286f653bf8b8fd155a0c9c3b9ee3dbc2a95b1b51f7a1dc11fe2c66018454a0c"
   name = "github.com/codegangsta/cli"
   packages = ["."]
   pruneopts = "UT"
-  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
-  version = "v1.20.0"
+  revision = "693af58b4d51b8fcc7f9d89576da170765980581"
 
 [[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
@@ -85,20 +85,20 @@
   revision = "d40cf49b3a77bba84a7afdbd7f1dc295d114efb1"
 
 [[projects]]
-  digest = "1:0a69a1c0db3591fcefb47f115b224592c8dfa4368b7ba9fae509d5e16cdc95c8"
+  digest = "1:31e761d97c76151dde79e9d28964a812c46efc5baee4085b86f68f0c654450de"
   name = "github.com/konsorten/go-windows-terminal-sequences"
   packages = ["."]
   pruneopts = "UT"
-  revision = "5c8c8bd35d3832f5d134ae1e1e375b69a4d25242"
-  version = "v1.0.1"
+  revision = "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
+  version = "v1.0.2"
 
 [[projects]]
   branch = "master"
-  digest = "1:77ff846073551e32ca81910c992650e2b5c98622cfc9822c9f97926ec449bf19"
+  digest = "1:deff41c4160cc5b487a1d1a69a58925f2d3ac11befa0692b50e76940594e20f5"
   name = "github.com/pkg/errors"
   packages = ["."]
   pruneopts = "UT"
-  revision = "856c240a51a2bf8fb8269ea7f3f9b046aadde36e"
+  revision = "27936f6d90f9c8e1145f11ed52ffffbfdb9e0af7"
 
 [[projects]]
   digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
@@ -117,15 +117,15 @@
   revision = "51a8f68e6c24dc43f1e371749c89a267de4ebc53"
 
 [[projects]]
-  digest = "1:5da8ce674952566deae4dbc23d07c85caafc6cfa815b0b3e03e41979cedb8750"
+  branch = "master"
+  digest = "1:656570e9301c9ce00e7dada49b86b855b5d5bb4df83ba7549bd8f2c7f1ed1025"
   name = "github.com/stretchr/testify"
   packages = [
     "assert",
     "require",
   ]
   pruneopts = "UT"
-  revision = "ffdc059bfe9ce6a4e144ba849dbedead332c6053"
-  version = "v1.3.0"
+  revision = "3f658bd5ac42cc0b5de5b427e95a480d5726ea76"
 
 [[projects]]
   branch = "master"
@@ -144,7 +144,7 @@
     "windows",
   ]
   pruneopts = "UT"
-  revision = "cc5685c2db1239775905f3911f0067c0fa74762f"
+  revision = "775f8194d0f9e65c46913c7be783d3d95a29333c"
 
 [[projects]]
   branch = "v2"
@@ -162,6 +162,7 @@
     "github.com/bitrise-io/bitrise/configs",
     "github.com/bitrise-io/bitrise/models",
     "github.com/bitrise-io/bitrise/plugins",
+    "github.com/bitrise-io/go-utils/command",
     "github.com/bitrise-io/go-utils/command/git",
     "github.com/bitrise-io/go-utils/fileutil",
     "github.com/bitrise-io/go-utils/log",

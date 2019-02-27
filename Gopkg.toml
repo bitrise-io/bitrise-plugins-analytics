@@ -7,7 +7,11 @@
   branch = "master"
 
 [[constraint]]
+  branch = "master"
   name = "github.com/bitrise-io/go-utils"
+
+[[constraint]]
+  name = "github.com/codegangsta/cli"
   branch = "master"
 
 [[constraint]]
@@ -16,6 +20,10 @@
 
 [[constraint]]
   name = "github.com/pkg/errors"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/stretchr/testify"
   branch = "master"
 
 [[constraint]]

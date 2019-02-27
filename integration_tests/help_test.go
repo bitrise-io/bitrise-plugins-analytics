@@ -35,7 +35,7 @@ func Test_HelpTest(t *testing.T) {
 		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
 		require.NoError(t, err)
 
-		cmd := command.New(binPath(), "help")
+		cmd := command.New(binPth, "help")
 		cmd.SetDir(tmpDir)
 		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
 		require.NoError(t, err, out)
@@ -47,7 +47,7 @@ func Test_HelpTest(t *testing.T) {
 		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
 		require.NoError(t, err)
 
-		cmd := command.New(binPath(), "h")
+		cmd := command.New(binPth, "h")
 		cmd.SetDir(tmpDir)
 		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
 		require.NoError(t, err, out)
@@ -59,7 +59,7 @@ func Test_HelpTest(t *testing.T) {
 		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
 		require.NoError(t, err)
 
-		cmd := command.New(binPath(), "--help")
+		cmd := command.New(binPth, "--help")
 		cmd.SetDir(tmpDir)
 		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
 		require.NoError(t, err, out)
@@ -71,7 +71,7 @@ func Test_HelpTest(t *testing.T) {
 		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
 		require.NoError(t, err)
 
-		cmd := command.New(binPath(), "-h")
+		cmd := command.New(binPth, "-h")
 		cmd.SetDir(tmpDir)
 		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
 		require.NoError(t, err, out)

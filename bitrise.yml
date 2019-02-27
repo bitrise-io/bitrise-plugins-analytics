@@ -3,68 +3,16 @@ default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
 app:
   envs:
-  - RELEASE_VERSION: 0.9.14
   - BIN_NAME: bitrise-plugins-analytics
 
 workflows:
-  # ----------------------------------------------------------------
-  # --- workflows for CI and testing
+
   test:
-    after_run:
-    - integration-test
     steps:
     - go-list:
     - golint:
     - errcheck:
     - go-test:
-
-  integration-test:
-    steps:
-    - script:
-        title: Go build
-        inputs:
-        - content: |-
-            #!/bin/bash
-            set -ex
-
-            # build the new bitrise-plugins-analytics
-            current_dir=$(pwd)
-            current_bin=$current_dir/_tmp/${BIN_NAME}
-            go build -o $current_bin
-
-            envman add --key CURRENT_BIN --value $current_bin
-    - script:
-        title: Run integration tests
-        inputs:
-        - content: |-
-            #!/bin/bash
-            echo "Running integration tests ..."
-            set -ex
-
-            export INTEGRATION_TEST_BINARY_PATH="$CURRENT_BIN"
-            go test -v ./_tests/integration/...
-
-  # ----------------------------------------------------------------
-  # --- workflows for Releasing
-  create-release:
-    title: Create release with Releaseman
-    before_run:
-    - test
-    after_run:
-    - create_binaries
-    - update_plugin_defintion
-    steps:
-    - script:
-        title:
-        inputs:
-        - content: |
-            #!/bin/bash
-            set -ex
-            go get -u github.com/bitrise-tools/releaseman
-            export CI=true
-            releaseman create-changelog \
-              --version "$RELEASE_VERSION" \
-              --set-version-script "bash _scripts/set_version.sh version/version.go"
 
   create_binaries:
     title: Create binaries
@@ -76,21 +24,11 @@ workflows:
         inputs:
         - content: |-
             #!/bin/bash
-            set -e
-
-            echo
-            echo "Create release binaries"
-            echo " * Build number: $BITRISE_BUILD_NUMBER"
-            echo
-
-            set -x
-
-            git_commit_hash="$(git rev-parse HEAD)"
-            version_package="github.com/bitrise-core/bitrise-plugins-analytics/version"
+            set -ex
 
             export ARCH=x86_64
             export GOARCH=amd64
-
+            version_package="github.com/bitrise-core/bitrise-plugins-analytics/version"
 
             # Create Darwin bin
             export OS=Darwin
@@ -98,7 +36,7 @@ workflows:
             binary_path="_bin/${BIN_NAME}-${OS}-${ARCH}"
 
             go build \
-              -ldflags "-X ${version_package}.VERSION=${RELEASE_VERSION} -X ${version_package}.BuildNumber=${BITRISE_BUILD_NUMBER} -X ${version_package}.Commit=${git_commit_hash}" \
+              -ldflags "-X ${version_package}.BuildNumber=${BITRISE_BUILD_NUMBER} -X ${version_package}.Commit=${GIT_CLONE_COMMIT_HASH}" \
               -o "${binary_path}"
 
             cp "${binary_path}" "${BITRISE_DEPLOY_DIR}/${BIN_NAME}-${OS}-${ARCH}"
@@ -111,31 +49,12 @@ workflows:
             binary_path="_bin/${BIN_NAME}-${OS}-${ARCH}"
 
             go build \
-              -ldflags "-X ${version_package}.VERSION=${RELEASE_VERSION} -X ${version_package}.BuildNumber=${BITRISE_BUILD_NUMBER} -X ${version_package}.Commit=${git_commit_hash}" \
+              -ldflags "-X ${version_package}.BuildNumber=${BITRISE_BUILD_NUMBER} -X ${version_package}.Commit=${git_commit_hash}" \
               -o "${binary_path}"
 
             cp "${binary_path}" "${BITRISE_DEPLOY_DIR}/${BIN_NAME}-${OS}-${ARCH}"
             envman add --key LINUX_BIN_NAME --value "${BIN_NAME}-${OS}-${ARCH}"
 
-  update_plugin_defintion:
-    steps:
-    - script:
-        title: Create binaries
-        inputs:
-        - content: |-
-            #!/bin/bash
-            set -e
-
-            go get github.com/bitrise-io/go-utils/fileutil
-
-            go run _scripts/set_version.go \
-              --src "https://github.com/bitrise-core/bitrise-plugins-analytics" \
-              --version "$RELEASE_VERSION" \
-              --osx_bin "$OSX_BIN_NAME" \
-              --linux_bin "$LINUX_BIN_NAME"
-
-  # ----------------------------------------------------------------
-  # --- workflows for Utility
   deps-update:
     title: Dep update
     description: |

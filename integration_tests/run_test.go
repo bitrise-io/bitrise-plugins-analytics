@@ -92,7 +92,7 @@ func Test_RunTest(t *testing.T) {
 			plugins.PluginInputPayloadKey + "=" + successBuildPayload,
 		}
 
-		cmd := command.New(binPath())
+		cmd := command.New(binPth)
 		cmd.SetEnvs(envs...)
 		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
 		require.NoError(t, err, out)
@@ -112,7 +112,7 @@ func Test_RunTest(t *testing.T) {
 			plugins.PluginInputPayloadKey + "=" + failedBuildPayload,
 		}
 
-		cmd := command.New(binPath())
+		cmd := command.New(binPth)
 		cmd.SetEnvs(envs...)
 		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
 		require.NoError(t, err, out)
