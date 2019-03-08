@@ -5,35 +5,43 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
-	"github.com/bitrise-core/bitrise-plugins-analytics/configs"
 	models "github.com/bitrise-io/bitrise/models"
+	"github.com/lunny/log"
 )
 
 //=======================================
 // Consts
 //=======================================
 
-const analyticsURL = "https://bitrise-stats.herokuapp.com/save"
+const analyticsBaseURL = "https://bitrise-step-analytics.herokuapp.com"
 
 //=======================================
 // Models
 //=======================================
 
-// AnonymizedUsageModel ...
-type AnonymizedUsageModel struct {
-	ID      string  `json:"step"`
-	Version string  `json:"version"`
-	RunTime float64 `json:"duration"`
-	Error   bool    `json:"error"`
-	CI      bool    `json:"ci"`
+// BuildAnalytics ...
+type BuildAnalytics struct {
+	AppSlug       string          `json:"app_slug"`
+	BuildSlug     string          `json:"build_slug"`
+	Status        string          `json:"status"`
+	StartTime     time.Time       `json:"start_time"`
+	Runtime       time.Duration   `json:"run_time"`
+	StepAnalytics []StepAnalytics `json:"step_analytics"`
+
+	// StackID    string        `json:"stack_id"` // not supported
+	// Platform   string        `json:"platform"` // not supported
+	// CLIVersion string        `json:"cli_version"` // not supported
 }
 
-// AnonymizedUsageGroupModel ...
-type AnonymizedUsageGroupModel struct {
-	Steps []AnonymizedUsageModel `json:"steps"`
+// StepAnalytics ...
+type StepAnalytics struct {
+	StepID  string        `json:"step_id"`
+	Status  string        `json:"status"`
+	Runtime time.Duration `json:"run_time"`
+	// StartTime time.Time     `json:"start_time"` // not supported
 }
 
 //=======================================
@@ -42,32 +50,54 @@ type AnonymizedUsageGroupModel struct {
 
 // SendAnonymizedAnalytics ...
 func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error {
-	stepRunResults := buildRunResults.SuccessSteps
-	stepRunResults = append(stepRunResults, buildRunResults.FailedSteps...)
-	stepRunResults = append(stepRunResults, buildRunResults.FailedSkippableSteps...)
-	stepRunResults = append(stepRunResults, buildRunResults.SkippedSteps...)
-
-	anonymizedUsageGroup := AnonymizedUsageGroupModel{}
-	for _, stepRunResult := range stepRunResults {
-		anonymizedUsageData := AnonymizedUsageModel{
-			ID:      stepRunResult.StepInfo.ID,
-			Version: stepRunResult.StepInfo.Version,
-			RunTime: stepRunResult.RunTime.Seconds(),
-			Error:   stepRunResult.Status != 0,
-			CI:      configs.IsCIMode,
+	var (
+		body          bytes.Buffer
+		runtime       time.Duration
+		stepAnalytics []StepAnalytics
+		buildResults  = map[bool]string{
+			true:  "failed",
+			false: "success",
 		}
+		stepResults = func(i int) string {
+			switch i {
+			case models.StepRunStatusCodeSuccess:
+				return "success"
+			case models.StepRunStatusCodeFailed:
+				return "failed"
+			case models.StepRunStatusCodeFailedSkippable:
+				return "failed_skippable"
+			case models.StepRunStatusCodeSkipped:
+				return "skipped"
+			case models.StepRunStatusCodeSkippedWithRunIf:
+				return "skipped_with_runif"
+			default:
+				return "unknown"
+			}
+		}
+	)
 
-		anonymizedUsageGroup.Steps = append(anonymizedUsageGroup.Steps, anonymizedUsageData)
+	for _, stepResult := range buildRunResults.OrderedResults() {
+		runtime += stepResult.RunTime
+		stepAnalytics = append(stepAnalytics, StepAnalytics{
+			StepID:  stepResult.StepInfo.ID,
+			Status:  stepResults(stepResult.Status),
+			Runtime: stepResult.RunTime,
+		})
 	}
 
-	data, err := json.Marshal(anonymizedUsageGroup)
-	if err != nil {
+	if err := json.NewEncoder(&body).Encode(BuildAnalytics{
+		AppSlug:   os.Getenv("BITRISE_APP_SLUG"),
+		BuildSlug: os.Getenv("BITRISE_BUILD_SLUG"),
+		StartTime: buildRunResults.StartTime,
+		Status:    buildResults[buildRunResults.IsBuildFailed()],
+		Runtime:   runtime,
+	}); err != nil {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", analyticsURL, bytes.NewBuffer(data))
+	req, err := http.NewRequest("POST", analyticsBaseURL+"/metrics", &body)
 	if err != nil {
-		return fmt.Errorf("failed to create request with usage data (%s), error: %s", string(data), err)
+		return fmt.Errorf("failed to create request with usage data (%s), error: %s", body.String(), err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -78,7 +108,7 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("failed to perform request with usage data (%s), error: %s", string(data), err)
+		return fmt.Errorf("failed to perform request with usage data (%s), error: %s", body.String(), err)
 	}
 
 	defer func() {
@@ -88,7 +118,7 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 	}()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 210 {
-		return fmt.Errorf("sending analytics data (%s), failed with status code: %d", string(data), resp.StatusCode)
+		return fmt.Errorf("sending analytics data (%s), failed with status code: %d", body.String(), resp.StatusCode)
 	}
 
 	return nil
