@@ -9,6 +9,7 @@ import (
 	"time"
 
 	models "github.com/bitrise-io/bitrise/models"
+	"github.com/bitrise-io/bitrise/plugins"
 	"github.com/lunny/log"
 )
 
@@ -30,18 +31,17 @@ type BuildAnalytics struct {
 	StartTime     time.Time       `json:"start_time"`
 	Runtime       time.Duration   `json:"run_time"`
 	StepAnalytics []StepAnalytics `json:"step_analytics"`
-
+	CLIVersion    string          `json:"cli_version"`
+	Platform      string          `json:"platform"`
 	// StackID    string        `json:"stack_id"` // not supported
-	// Platform   string        `json:"platform"` // not supported
-	// CLIVersion string        `json:"cli_version"` // not supported
 }
 
 // StepAnalytics ...
 type StepAnalytics struct {
-	StepID  string        `json:"step_id"`
-	Status  string        `json:"status"`
-	Runtime time.Duration `json:"run_time"`
-	// StartTime time.Time     `json:"start_time"` // not supported
+	StepID    string        `json:"step_id"`
+	Status    string        `json:"status"`
+	Runtime   time.Duration `json:"run_time"`
+	StartTime time.Time     `json:"start_time"`
 }
 
 //=======================================
@@ -79,18 +79,21 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 	for _, stepResult := range buildRunResults.OrderedResults() {
 		runtime += stepResult.RunTime
 		stepAnalytics = append(stepAnalytics, StepAnalytics{
-			StepID:  stepResult.StepInfo.ID,
-			Status:  stepResults(stepResult.Status),
-			Runtime: stepResult.RunTime,
+			StepID:    stepResult.StepInfo.ID,
+			Status:    stepResults(stepResult.Status),
+			Runtime:   stepResult.RunTime,
+			StartTime: stepResult.StartTime,
 		})
 	}
 
 	if err := json.NewEncoder(&body).Encode(BuildAnalytics{
-		AppSlug:   os.Getenv("BITRISE_APP_SLUG"),
-		BuildSlug: os.Getenv("BITRISE_BUILD_SLUG"),
-		StartTime: buildRunResults.StartTime,
-		Status:    buildResults[buildRunResults.IsBuildFailed()],
-		Runtime:   runtime,
+		CLIVersion: os.Getenv(plugins.PluginInputBitriseVersionKey),
+		Platform:   buildRunResults.ProjectType,
+		AppSlug:    os.Getenv("BITRISE_APP_SLUG"),
+		BuildSlug:  os.Getenv("BITRISE_BUILD_SLUG"),
+		StartTime:  buildRunResults.StartTime,
+		Status:     buildResults[buildRunResults.IsBuildFailed()],
+		Runtime:    runtime,
 	}); err != nil {
 		return err
 	}
