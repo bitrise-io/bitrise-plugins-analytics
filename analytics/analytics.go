@@ -33,7 +33,7 @@ type BuildAnalytics struct {
 	StepAnalytics []StepAnalytics `json:"step_analytics"`
 	CLIVersion    string          `json:"cli_version"`
 	Platform      string          `json:"platform"`
-	// StackID    string        `json:"stack_id"` // not supported
+	StackID       string          `json:"stack_id"` // not supported
 }
 
 // StepAnalytics ...
@@ -94,6 +94,7 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 		StartTime:  buildRunResults.StartTime,
 		Status:     buildResults[buildRunResults.IsBuildFailed()],
 		Runtime:    runtime,
+		StackID:    os.Getenv("BITRISE_STACK_ID"),
 	}); err != nil {
 		return err
 	}
