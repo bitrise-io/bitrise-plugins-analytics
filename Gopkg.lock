@@ -11,7 +11,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:1cca4e2a7c566ce3625bb2f746b11b8f0a1606124dbc8fd8727aa1ebc73a89e2"
+  digest = "1:469bd0db66d52f320849ea01c191fae0a31adf6558d799903771d639a531579d"
   name = "github.com/bitrise-io/bitrise"
   packages = [
     "configs",
@@ -23,7 +23,7 @@
     "version",
   ]
   pruneopts = "UT"
-  revision = "43453e390ecdc3f8a571437e45b072febe3eb567"
+  revision = "73db1738b2b2569713dbaa88b876b135664aa2f4"
 
 [[projects]]
   branch = "master"
@@ -31,7 +31,7 @@
   name = "github.com/bitrise-io/envman"
   packages = ["models"]
   pruneopts = "UT"
-  revision = "12f91a1a8324162e408416161b6919306402d979"
+  revision = "c6683c3e097216a80eb72092bf857c8a9591195e"
 
 [[projects]]
   branch = "master"
@@ -58,7 +58,7 @@
   name = "github.com/bitrise-io/stepman"
   packages = ["models"]
   pruneopts = "UT"
-  revision = "e7385e0f946cc7c1bb347b04fe7c2eb92e7b799d"
+  revision = "f4f6ef946f83d9a4e823d3531e15287dec05fce1"
 
 [[projects]]
   branch = "master"
@@ -91,14 +91,6 @@
   pruneopts = "UT"
   revision = "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
   version = "v1.0.2"
-
-[[projects]]
-  digest = "1:243276e83547cc376508850cdd633a59af81905fd1c7d5447838bcc9a0b14dbb"
-  name = "github.com/lunny/log"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "7887c61bf0de75586961948b286be6f7d05d9f58"
-  version = "v0.1"
 
 [[projects]]
   branch = "master"
@@ -141,7 +133,7 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "c2843e01d9a2bc60bb26ad24e09734fdc2d9ec58"
+  revision = "a1f597ede03a7bef967a422b5b3a5bd08805a01e"
 
 [[projects]]
   branch = "master"
@@ -176,7 +168,6 @@
     "github.com/bitrise-io/go-utils/pathutil",
     "github.com/codegangsta/cli",
     "github.com/hashicorp/go-version",
-    "github.com/lunny/log",
     "github.com/pkg/errors",
     "github.com/stretchr/testify/require",
     "gopkg.in/yaml.v2",

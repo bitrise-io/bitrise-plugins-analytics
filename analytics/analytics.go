@@ -10,7 +10,7 @@ import (
 
 	models "github.com/bitrise-io/bitrise/models"
 	"github.com/bitrise-io/bitrise/plugins"
-	"github.com/lunny/log"
+	"github.com/bitrise-io/go-utils/log"
 )
 
 //=======================================
@@ -99,7 +99,7 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 		return err
 	}
 
-	req, err := http.NewRequest("POST", analyticsBaseURL+"/metrics", &body)
+	req, err := http.NewRequest(http.MethodPost, analyticsBaseURL+"/metrics", &body)
 	if err != nil {
 		return fmt.Errorf("failed to create request with usage data (%s), error: %s", body.String(), err)
 	}
