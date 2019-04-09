@@ -12,7 +12,7 @@ Can be run directly with the bitrise CLI, requires version 1.3.0 or newer.
 First install the plugin:
 
 ```
-bitrise plugin install --source https://github.com/bitrise-core/bitrise-plugins-analytics.git
+bitrise plugin install --source https://github.com/bitrise-io/bitrise-plugins-analytics.git
 ```
 
 After that, you can use it:

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/bitrise-core/bitrise-plugins-analytics/cli"
+	"github.com/bitrise-io/bitrise-plugins-analytics/cli"
 )
 
 func main() {

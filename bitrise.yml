@@ -28,7 +28,7 @@ workflows:
 
             export ARCH=x86_64
             export GOARCH=amd64
-            version_package="github.com/bitrise-core/bitrise-plugins-analytics/version"
+            version_package="github.com/bitrise-io/bitrise-plugins-analytics/version"
 
             # Create Darwin bin
             export OS=Darwin

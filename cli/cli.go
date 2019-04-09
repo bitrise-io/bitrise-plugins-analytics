@@ -8,9 +8,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/bitrise-core/bitrise-plugins-analytics/analytics"
-	"github.com/bitrise-core/bitrise-plugins-analytics/configs"
-	"github.com/bitrise-core/bitrise-plugins-analytics/version"
+	"github.com/bitrise-io/bitrise-plugins-analytics/analytics"
+	"github.com/bitrise-io/bitrise-plugins-analytics/configs"
+	"github.com/bitrise-io/bitrise-plugins-analytics/version"
 	bitriseConfigs "github.com/bitrise-io/bitrise/configs"
 	"github.com/bitrise-io/bitrise/models"
 	"github.com/bitrise-io/bitrise/plugins"
@@ -107,7 +107,7 @@ func action(c *cli.Context) {
 		log.Infof("")
 		log.Infof("Submitting anonymized usage informations...")
 		log.Infof("For more information visit:")
-		log.Infof("https://github.com/bitrise-core/bitrise-plugins-analytics/blob/master/README.md")
+		log.Infof("https://github.com/bitrise-io/bitrise-plugins-analytics/blob/master/README.md")
 
 		if err := analytics.SendAnonymizedAnalytics(buildRunResults); err != nil {
 			log.Errorf("Failed to send analytics, error: %s", err)
