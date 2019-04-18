@@ -1,8 +1,4 @@
 [[constraint]]
-  name = "github.com/Sirupsen/logrus"
-  branch = "master"
-
-[[constraint]]
   name = "github.com/bitrise-io/bitrise"
   branch = "master"
 
