@@ -21,6 +21,8 @@ const (
 	stackIDEnvKey    = "BITRISE_STACK_ID"
 	appSlugEnvKey    = "BITRISE_APP_SLUG"
 	buildSlugEnvKey  = "BITRISE_BUILD_SLUG"
+	workflowName     = "BITRISE_TRIGGERED_WORKFLOW_TITLE"
+	repoSlug         = "BITRISEIO_GIT_REPOSITORY_SLUG"
 	analyticsBaseURL = "https://bitrise-step-analytics.herokuapp.com"
 )
 
@@ -39,14 +41,19 @@ type BuildAnalytics struct {
 	StartTime     time.Time       `json:"start_time"`
 	CLIVersion    string          `json:"cli_version"`
 	StepAnalytics []StepAnalytics `json:"step_analytics"`
+	RepositoryID  string          `json:"repo_id"`
+	WorkflowName  string          `json:"workflow_name"`
 }
 
 // StepAnalytics ...
 type StepAnalytics struct {
-	StepID    string        `json:"step_id"`
-	Status    string        `json:"status"`
-	Runtime   time.Duration `json:"run_time"`
-	StartTime time.Time     `json:"start_time"`
+	StepID      string        `json:"step_id"`
+	StepTitle   *string       `json:"step_title"`
+	StepVersion string        `json:"step_verion"`
+	StepSource  *string       `json:"step_source"`
+	Status      string        `json:"status"`
+	Runtime     time.Duration `json:"run_time"`
+	StartTime   time.Time     `json:"start_time"`
 }
 
 //=======================================
@@ -78,23 +85,29 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 	)
 	for _, stepResult := range buildRunResults.OrderedResults() {
 		stepAnalytics, runtime = append(stepAnalytics, StepAnalytics{
-			StepID:    stepResult.StepInfo.ID,
-			Status:    stepStatus(stepResult.Status),
-			Runtime:   stepResult.RunTime,
-			StartTime: stepResult.StartTime,
+			StepID:      stepResult.StepInfo.ID,
+			StepTitle:   stepResult.StepInfo.Step.Title,
+			StepVersion: stepResult.StepInfo.Version,
+			StepSource:  stepResult.StepInfo.Step.SourceCodeURL,
+			Status:      stepStatus(stepResult.Status),
+			Runtime:     stepResult.RunTime,
+			StartTime:   stepResult.StartTime,
 		}), runtime+stepResult.RunTime
 	}
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(BuildAnalytics{
-		Runtime:    runtime,
-		StartTime:  buildRunResults.StartTime,
-		Platform:   buildRunResults.ProjectType,
-		StackID:    os.Getenv(stackIDEnvKey),
-		AppSlug:    os.Getenv(appSlugEnvKey),
-		BuildSlug:  os.Getenv(buildSlugEnvKey),
-		Status:     buildStatus(buildRunResults.IsBuildFailed()),
-		CLIVersion: os.Getenv(plugins.PluginInputBitriseVersionKey),
+		Runtime:       runtime,
+		StartTime:     buildRunResults.StartTime,
+		Platform:      buildRunResults.ProjectType,
+		StackID:       os.Getenv(stackIDEnvKey),
+		AppSlug:       os.Getenv(appSlugEnvKey),
+		BuildSlug:     os.Getenv(buildSlugEnvKey),
+		Status:        buildStatus(buildRunResults.IsBuildFailed()),
+		CLIVersion:    os.Getenv(plugins.PluginInputBitriseVersionKey),
+		StepAnalytics: stepAnalytics,
+		RepositoryID:  os.Getenv(repoSlug),
+		WorkflowName:  os.Getenv(workflowName),
 	}); err != nil {
 		return err
 	}
