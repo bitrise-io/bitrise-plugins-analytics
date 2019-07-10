@@ -11,6 +11,7 @@ import (
 	models "github.com/bitrise-io/bitrise/models"
 	"github.com/bitrise-io/bitrise/plugins"
 	"github.com/bitrise-io/go-utils/log"
+	"github.com/bitrise-io/go-utils/pointers"
 )
 
 //=======================================
@@ -48,9 +49,9 @@ type BuildAnalytics struct {
 // StepAnalytics ...
 type StepAnalytics struct {
 	StepID      string        `json:"step_id"`
-	StepTitle   *string       `json:"step_title"`
+	StepTitle   string        `json:"step_title"`
 	StepVersion string        `json:"step_verion"`
-	StepSource  *string       `json:"step_source"`
+	StepSource  string        `json:"step_source"`
 	Status      string        `json:"status"`
 	Runtime     time.Duration `json:"run_time"`
 	StartTime   time.Time     `json:"start_time"`
@@ -86,9 +87,9 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 	for _, stepResult := range buildRunResults.OrderedResults() {
 		stepAnalytics, runtime = append(stepAnalytics, StepAnalytics{
 			StepID:      stepResult.StepInfo.ID,
-			StepTitle:   stepResult.StepInfo.Step.Title,
+			StepTitle:   pointers.StringWithDefault(stepResult.StepInfo.Step.Title, ""),
 			StepVersion: stepResult.StepInfo.Version,
-			StepSource:  stepResult.StepInfo.Step.SourceCodeURL,
+			StepSource:  pointers.StringWithDefault(stepResult.StepInfo.Step.SourceCodeURL, ""),
 			Status:      stepStatus(stepResult.Status),
 			Runtime:     stepResult.RunTime,
 			StartTime:   stepResult.StartTime,
