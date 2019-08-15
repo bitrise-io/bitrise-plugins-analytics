@@ -7,12 +7,12 @@
   name = "github.com/bitrise-io/go-utils"
 
 [[constraint]]
-  name = "github.com/codegangsta/cli"
-  branch = "master"
+  name = "github.com/urfave/cli"
+  version = "v1.21.0"
 
 [[constraint]]
   name = "github.com/hashicorp/go-version"
-  branch = "master"
+  version = "v1.2.0"
 
 [[constraint]]
   name = "github.com/pkg/errors"
@@ -24,7 +24,7 @@
 
 [[constraint]]
   name = "gopkg.in/yaml.v2"
-  branch = "v2"
+  version = "v2"
 
 [prune]
   go-tests = true

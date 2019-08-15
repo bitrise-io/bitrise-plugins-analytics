@@ -15,7 +15,7 @@ import (
 	"github.com/bitrise-io/bitrise/models"
 	"github.com/bitrise-io/bitrise/plugins"
 	log "github.com/bitrise-io/go-utils/log"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 	ver "github.com/hashicorp/go-version"
 )
 
