@@ -20,9 +20,9 @@ VERSION:
    %s
 
 COMMANDS:
-     on       Turn sending anonimized usage information on.
-     off      Turn sending anonimized usage information off.
-     help, h  Shows a list of commands or help for one command
+   on       Turn sending anonimized usage information on.
+   off      Turn sending anonimized usage information off.
+   help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --loglevel value, -l value  Log level (options: debug, info, warn, error, fatal, panic). [$LOGLEVEL]
