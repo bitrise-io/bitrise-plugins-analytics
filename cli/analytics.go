@@ -1,8 +1,10 @@
 package cli
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/bitrise-io/bitrise-plugins-analytics/analytics"
@@ -55,11 +57,37 @@ func ensureBitriseCLIVersion() (string, error) {
 	return ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr)
 }
 
-func readPayload() (models.BuildRunResultsModel, error) {
-	payload := os.Getenv(plugins.PluginInputPayloadKey)
+func read(r io.Reader) ([]byte, error) {
+	data := make([]byte, 100)
+	for {
+		data = data[:cap(data)]
+		n, err := r.Read(data)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return nil, err
+		}
+		data = data[:n]
+	}
+	return data, nil
+}
+
+var errNoInput = errors.New("nothing to read")
+
+func readPayload(r io.Reader) (models.BuildRunResultsModel, error) {
+	b, err := read(r)
+	if err != nil {
+		return models.BuildRunResultsModel{}, err
+	}
+	// check if b has anything other than NULL character
+	if len(bytes.Trim(b, "\x00")) == 0 {
+		return models.BuildRunResultsModel{}, errNoInput
+	}
+
 	var buildRunResults models.BuildRunResultsModel
-	if err := json.Unmarshal([]byte(payload), &buildRunResults); err != nil {
-		return models.BuildRunResultsModel{}, fmt.Errorf("failed to parse plugin input (%s): %s", payload, err)
+	if err := json.Unmarshal(b, &buildRunResults); err != nil {
+		return models.BuildRunResultsModel{}, fmt.Errorf("failed to parse plugin input (%s): %s", string(b), err)
 	}
 	return buildRunResults, nil
 }
@@ -77,7 +105,7 @@ func sendAnalyticsIfEnabled() {
 		log.Warnf(warn)
 	}
 
-	payload, err := readPayload()
+	payload, err := readPayload(os.Stdin)
 	if err != nil {
 		failf(err.Error())
 	}

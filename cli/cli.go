@@ -38,7 +38,7 @@ func printVersion(c *cli.Context) {
 
 func action(c *cli.Context) {
 	if os.Getenv(plugins.PluginInputPluginModeKey) == string(plugins.TriggerMode) {
-		sendAnalytics()
+		sendAnalyticsIfEnabled()
 		return
 	}
 
