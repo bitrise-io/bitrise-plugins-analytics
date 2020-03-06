@@ -41,30 +41,47 @@ func ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr str
 	return "", nil
 }
 
-func sendAnalytics() {
+func isAnalyticsEnabled() (bool, error) {
 	config, err := configs.ReadConfig()
 	if err != nil {
-		log.Errorf("Failed to read analytics configuration, error: %s", err)
-		os.Exit(1)
+		return false, fmt.Errorf("failed to read analytics configuration: %s", err)
 	}
+	return !config.IsAnalyticsDisabled, nil
+}
 
-	if config.IsAnalyticsDisabled {
-		return
-	}
-
+func ensureBitriseCLIVersion() (string, error) {
 	hostBitriseFormatVersionStr := os.Getenv(plugins.PluginInputFormatVersionKey)
 	pluginFormatVersionStr := models.Version
-	if warn, err := ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr); err != nil {
-		log.Errorf(err.Error())
-		os.Exit(1)
-	} else if warn != "" {
-		log.Warnf(warn)
-	}
+	return ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr)
+}
 
+func readPayload() (models.BuildRunResultsModel, error) {
 	payload := os.Getenv(plugins.PluginInputPayloadKey)
 	var buildRunResults models.BuildRunResultsModel
 	if err := json.Unmarshal([]byte(payload), &buildRunResults); err != nil {
-		log.Errorf("Failed to parse plugin input (%s), error: %s", payload, err)
+		return models.BuildRunResultsModel{}, fmt.Errorf("failed to parse plugin input (%s): %s", payload, err)
+	}
+	return buildRunResults, nil
+}
+
+func sendAnalyticsIfEnabled() {
+	if enabled, err := isAnalyticsEnabled(); err != nil {
+		log.Errorf(err.Error())
+		os.Exit(1)
+	} else if !enabled {
+		return
+	}
+
+	if warn, err := ensureBitriseCLIVersion(); err != nil {
+		log.Errorf(err.Error())
+		os.Exit(1)
+	} else if len(warn) > 0 {
+		log.Warnf(warn)
+	}
+
+	payload, err := readPayload()
+	if err != nil {
+		log.Errorf(err.Error())
 		os.Exit(1)
 	}
 
@@ -73,7 +90,7 @@ func sendAnalytics() {
 	log.Infof("For more information visit:")
 	log.Infof("https://github.com/bitrise-io/bitrise-plugins-analytics/blob/master/README.md")
 
-	if err := analytics.SendAnonymizedAnalytics(buildRunResults); err != nil {
+	if err := analytics.SendAnonymizedAnalytics(payload); err != nil {
 		log.Errorf("Failed to send analytics, error: %s", err)
 		os.Exit(1)
 	}
