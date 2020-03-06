@@ -9,25 +9,25 @@ import (
 	"github.com/urfave/cli"
 )
 
-type onOff bool
+type state bool
 
-func (o onOff) String() string {
-	if o == true {
+func (s state) String() string {
+	if s {
 		return "on"
 	}
 	return "off"
 }
 
-func createSwitchCommand(on onOff) cli.Command {
+func createSwitchCommand(s state) cli.Command {
 	return cli.Command{
-		Name:  on.String(),
-		Usage: fmt.Sprintf("Turn sending anonimized usage information %s.", on),
+		Name:  s.String(),
+		Usage: fmt.Sprintf("Turn sending anonimized usage information %s.", s),
 		Action: func(c *cli.Context) {
 			log.Infof("")
-			log.Infof("Turning analytics %s...", on)
+			log.Infof("Turning analytics %s...", s)
 
-			if err := configs.SetAnalytics(bool(on)); err != nil {
-				log.Errorf("Failed to turn %s analytics, error: %s", on, err)
+			if err := configs.SetAnalytics(bool(s)); err != nil {
+				log.Errorf("Failed to turn %s analytics, error: %s", s, err)
 				os.Exit(1)
 			}
 		},
