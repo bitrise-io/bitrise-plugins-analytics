@@ -66,23 +66,20 @@ func readPayload() (models.BuildRunResultsModel, error) {
 
 func sendAnalyticsIfEnabled() {
 	if enabled, err := isAnalyticsEnabled(); err != nil {
-		log.Errorf(err.Error())
-		os.Exit(1)
+		failf(err.Error())
 	} else if !enabled {
 		return
 	}
 
 	if warn, err := ensureBitriseCLIVersion(); err != nil {
-		log.Errorf(err.Error())
-		os.Exit(1)
+		failf(err.Error())
 	} else if len(warn) > 0 {
 		log.Warnf(warn)
 	}
 
 	payload, err := readPayload()
 	if err != nil {
-		log.Errorf(err.Error())
-		os.Exit(1)
+		failf(err.Error())
 	}
 
 	log.Infof("")
@@ -91,7 +88,6 @@ func sendAnalyticsIfEnabled() {
 	log.Infof("https://github.com/bitrise-io/bitrise-plugins-analytics/blob/master/README.md")
 
 	if err := analytics.SendAnonymizedAnalytics(payload); err != nil {
-		log.Errorf("Failed to send analytics, error: %s", err)
-		os.Exit(1)
+		failf("Failed to send analytics, error: %s", err)
 	}
 }

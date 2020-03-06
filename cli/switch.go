@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/bitrise-io/bitrise-plugins-analytics/configs"
 	log "github.com/bitrise-io/go-utils/log"
@@ -27,8 +26,7 @@ func createSwitchCommand(s state) cli.Command {
 			log.Infof("Turning analytics %s...", s)
 
 			if err := configs.SetAnalytics(bool(s)); err != nil {
-				log.Errorf("Failed to turn %s analytics, error: %s", s, err)
-				os.Exit(1)
+				failf("Failed to turn %s analytics, error: %s", s, err)
 			}
 		},
 	}

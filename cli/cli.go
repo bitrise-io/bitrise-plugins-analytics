@@ -43,8 +43,7 @@ func action(c *cli.Context) {
 	}
 
 	if err := cli.ShowAppHelp(c); err != nil {
-		log.Errorf("Failed to show help, error: %s", err)
-		os.Exit(1)
+		failf("Failed to show help, error: %s", err)
 	}
 }
 
@@ -66,12 +65,16 @@ func createApp() *cli.App {
 	return app
 }
 
+func failf(format string, args ...interface{}) {
+	log.Errorf(format, args...)
+	os.Exit(1)
+}
+
 // Run ...
 func Run() {
 	cli.VersionPrinter = printVersion
 
 	if err := createApp().Run(os.Args); err != nil {
-		log.Errorf("Finished with Error: %s", err)
-		os.Exit(1)
+		failf("Finished with Error: %s", err)
 	}
 }
