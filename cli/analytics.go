@@ -2,6 +2,7 @@ package cli
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/bitrise-io/bitrise-plugins-analytics/analytics"
@@ -13,19 +14,22 @@ import (
 	"github.com/pkg/errors"
 )
 
+// minBitriseCLIVersion points to the version of Bitrise CLI introduceses Bitrise plugins.
+const minBitriseCLIVersion = "1.6.0"
+
 func ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr string) (string, error) {
 	if hostBitriseFormatVersionStr == "" {
-		return "This analytics plugin version would need bitrise-cli version >= 1.6.0 to submit analytics", nil
+		return fmt.Sprintf("This analytics plugin version would need bitrise-cli version >= %s to submit analytics", minBitriseCLIVersion), nil
 	}
 
 	hostBitriseFormatVersion, err := version.NewVersion(hostBitriseFormatVersionStr)
 	if err != nil {
-		return "", errors.Wrapf(err, "Failed to parse bitrise format version (%s)", hostBitriseFormatVersionStr)
+		return "", errors.Wrapf(err, "failed to parse bitrise format version (%s)", hostBitriseFormatVersionStr)
 	}
 
 	pluginFormatVersion, err := version.NewVersion(pluginFormatVersionStr)
 	if err != nil {
-		return "", errors.Errorf("Failed to parse analytics plugin format version (%s), error: %s", pluginFormatVersionStr, err)
+		return "", errors.Errorf("failed to parse analytics plugin format version (%s), error: %s", pluginFormatVersionStr, err)
 	}
 
 	if pluginFormatVersion.LessThan(hostBitriseFormatVersion) {
@@ -38,16 +42,6 @@ func ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr str
 }
 
 func sendAnalytics() {
-	hostBitriseFormatVersionStr := os.Getenv(plugins.PluginInputFormatVersionKey)
-	pluginFormatVersionStr := models.Version
-
-	if warn, err := ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr); err != nil {
-		log.Errorf(err.Error())
-		os.Exit(1)
-	} else if warn != "" {
-		log.Warnf(warn)
-	}
-
 	config, err := configs.ReadConfig()
 	if err != nil {
 		log.Errorf("Failed to read analytics configuration, error: %s", err)
@@ -58,8 +52,16 @@ func sendAnalytics() {
 		return
 	}
 
-	payload := os.Getenv(plugins.PluginInputPayloadKey)
+	hostBitriseFormatVersionStr := os.Getenv(plugins.PluginInputFormatVersionKey)
+	pluginFormatVersionStr := models.Version
+	if warn, err := ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr); err != nil {
+		log.Errorf(err.Error())
+		os.Exit(1)
+	} else if warn != "" {
+		log.Warnf(warn)
+	}
 
+	payload := os.Getenv(plugins.PluginInputPayloadKey)
 	var buildRunResults models.BuildRunResultsModel
 	if err := json.Unmarshal([]byte(payload), &buildRunResults); err != nil {
 		log.Errorf("Failed to parse plugin input (%s), error: %s", payload, err)
