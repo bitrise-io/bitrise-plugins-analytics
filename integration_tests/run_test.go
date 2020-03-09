@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"strings"
 	"testing"
 
 	bitriseConfigs "github.com/bitrise-io/bitrise/configs"
@@ -89,11 +90,11 @@ func Test_RunTest(t *testing.T) {
 
 			plugins.PluginInputPluginModeKey + "=" + string(plugins.TriggerMode),
 			plugins.PluginInputFormatVersionKey + "=" + models.Version,
-			plugins.PluginInputPayloadKey + "=" + successBuildPayload,
 		}
 
 		cmd := command.New(binPth)
 		cmd.SetEnvs(envs...)
+		cmd.SetStdin(strings.NewReader(successBuildPayload))
 		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
 		require.NoError(t, err, out)
 	}
@@ -109,11 +110,11 @@ func Test_RunTest(t *testing.T) {
 
 			plugins.PluginInputPluginModeKey + "=" + string(plugins.TriggerMode),
 			plugins.PluginInputFormatVersionKey + "=" + models.Version,
-			plugins.PluginInputPayloadKey + "=" + failedBuildPayload,
 		}
 
 		cmd := command.New(binPth)
 		cmd.SetEnvs(envs...)
+		cmd.SetStdin(strings.NewReader(failedBuildPayload))
 		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
 		require.NoError(t, err, out)
 	}
