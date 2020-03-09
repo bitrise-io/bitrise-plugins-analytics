@@ -58,19 +58,19 @@ func ensureBitriseCLIVersion() (string, error) {
 }
 
 func read(r io.Reader) ([]byte, error) {
-	data := make([]byte, 100)
+	var buff []byte
 	for {
-		data = data[:cap(data)]
-		n, err := r.Read(data)
+		chunk := make([]byte, 100)
+		_, err := r.Read(chunk)
 		if err != nil {
 			if err == io.EOF {
 				break
 			}
 			return nil, err
 		}
-		data = data[:n]
+		buff = append(buff, chunk...)
 	}
-	return data, nil
+	return buff, nil
 }
 
 var errNoInput = errors.New("nothing to read")
@@ -80,8 +80,9 @@ func readPayload(r io.Reader) (models.BuildRunResultsModel, error) {
 	if err != nil {
 		return models.BuildRunResultsModel{}, err
 	}
-	// check if b has anything other than NULL character
-	if len(bytes.Trim(b, "\x00")) == 0 {
+	// Remove any NULL characters from 'b'
+	b = bytes.Trim(b, "\x00")
+	if len(b) == 0 {
 		return models.BuildRunResultsModel{}, errNoInput
 	}
 
