@@ -104,11 +104,11 @@ the problem actually occurred in calling code.*/
 // failed.
 func CallerInfo() []string {
 
-	pc := uintptr(0)
-	file := ""
-	line := 0
-	ok := false
-	name := ""
+	var pc uintptr
+	var ok bool
+	var file string
+	var line int
+	var name string
 
 	callers := []string{}
 	for i := 0; ; i++ {
@@ -429,14 +429,27 @@ func samePointers(first, second interface{}) bool {
 // to a type conversion in the Go grammar.
 func formatUnequalValues(expected, actual interface{}) (e string, a string) {
 	if reflect.TypeOf(expected) != reflect.TypeOf(actual) {
-		return fmt.Sprintf("%T(%#v)", expected, expected),
-			fmt.Sprintf("%T(%#v)", actual, actual)
+		return fmt.Sprintf("%T(%s)", expected, truncatingFormat(expected)),
+			fmt.Sprintf("%T(%s)", actual, truncatingFormat(actual))
 	}
 	switch expected.(type) {
 	case time.Duration:
 		return fmt.Sprintf("%v", expected), fmt.Sprintf("%v", actual)
 	}
-	return fmt.Sprintf("%#v", expected), fmt.Sprintf("%#v", actual)
+	return truncatingFormat(expected), truncatingFormat(actual)
+}
+
+// truncatingFormat formats the data and truncates it if it's too long.
+//
+// This helps keep formatted error messages lines from exceeding the
+// bufio.MaxScanTokenSize max line length that the go testing framework imposes.
+func truncatingFormat(data interface{}) string {
+	value := fmt.Sprintf("%#v", data)
+	max := bufio.MaxScanTokenSize - 100 // Give us some space the type info too if needed.
+	if len(value) > max {
+		value = value[0:max] + "<... truncated>"
+	}
+	return value
 }
 
 // EqualValues asserts that two objects are equal or convertable to the same types
@@ -648,7 +661,7 @@ func True(t TestingT, value bool, msgAndArgs ...interface{}) bool {
 		h.Helper()
 	}
 
-	if value != true {
+	if !value {
 		return Fail(t, "Should be true", msgAndArgs...)
 	}
 
@@ -664,7 +677,7 @@ func False(t TestingT, value bool, msgAndArgs ...interface{}) bool {
 		h.Helper()
 	}
 
-	if value != false {
+	if value {
 		return Fail(t, "Should be false", msgAndArgs...)
 	}
 
@@ -1079,7 +1092,7 @@ func toFloat(x interface{}) (float64, bool) {
 	case float32:
 		xf = float64(xn)
 	case float64:
-		xf = float64(xn)
+		xf = xn
 	case time.Duration:
 		xf = float64(xn)
 	default:
@@ -1553,6 +1566,7 @@ var spewConfig = spew.ConfigState{
 	DisablePointerAddresses: true,
 	DisableCapacities:       true,
 	SortKeys:                true,
+	DisableMethods:          true,
 }
 
 type tHelper interface {
