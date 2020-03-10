@@ -104,13 +104,10 @@ func Test_readPayloadFromPipe(t *testing.T) {
 	r, w, err := os.Pipe()
 	require.NoError(t, err)
 
-	go func() {
-		n, err := w.Write([]byte(failedBuildPayload))
-		require.NoError(t, err)
-		require.Equal(t, len([]byte(failedBuildPayload)), n)
-
-		require.NoError(t, w.Close())
-	}()
+	n, err := w.Write([]byte(failedBuildPayload))
+	require.NoError(t, err)
+	require.Equal(t, len([]byte(failedBuildPayload)), n)
+	require.NoError(t, w.Close())
 
 	payload, err := readPayload(r)
 	require.NoError(t, err)
