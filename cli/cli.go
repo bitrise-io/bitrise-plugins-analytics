@@ -80,7 +80,6 @@ func createApp() *cli.App {
 
 	app.Name = path.Base(os.Args[0])
 	app.Usage = "Bitrise Analytics plugin"
-	app.UsageText = "echo $BuildRunResultsModel | " + path.Base(os.Args[0])
 	app.Version = version.VERSION
 
 	app.Author = ""
