@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -61,14 +60,17 @@ func read(r io.Reader) ([]byte, error) {
 	var buff []byte
 	for {
 		chunk := make([]byte, 100)
-		_, err := r.Read(chunk)
+		n, err := r.Read(chunk)
 		if err != nil {
 			if err == io.EOF {
 				break
 			}
 			return nil, err
 		}
-		buff = append(buff, chunk...)
+		if n == 0 {
+			break
+		}
+		buff = append(buff, chunk[:n]...)
 	}
 	return buff, nil
 }
@@ -80,8 +82,6 @@ func readPayload(r io.Reader) (models.BuildRunResultsModel, error) {
 	if err != nil {
 		return models.BuildRunResultsModel{}, err
 	}
-	// Remove any NULL characters from 'b'
-	b = bytes.Trim(b, "\x00")
 	if len(b) == 0 {
 		return models.BuildRunResultsModel{}, errNoInput
 	}
