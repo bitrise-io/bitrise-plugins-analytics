@@ -37,13 +37,41 @@ func printVersion(c *cli.Context) {
 }
 
 func action(c *cli.Context) {
-	if os.Getenv(plugins.PluginInputPluginModeKey) == string(plugins.TriggerMode) {
-		sendAnalyticsIfEnabled()
+	if os.Getenv(plugins.PluginInputPluginModeKey) != string(plugins.TriggerMode) {
+		log.Errorf("Required envs not set: only Bitrise CLI is intended to send build run analytics")
+
+		if err := cli.ShowAppHelp(c); err != nil {
+			failf("Failed to show help, error: %s", err)
+		}
 		return
 	}
 
-	if err := cli.ShowAppHelp(c); err != nil {
-		failf("Failed to show help, error: %s", err)
+	if enabled, err := isAnalyticsEnabled(); err != nil {
+		failf("Failed to check if analytics enabled: %s", err.Error())
+	} else if !enabled {
+		log.Debugf("Build run analytics disabled, terminating...")
+		return
+	}
+
+	if warn, err := ensureBitriseCLIVersion(); err != nil {
+		failf(err.Error())
+	} else if len(warn) > 0 {
+		log.Warnf(warn)
+	}
+
+	if available, err := isStdinDataAvailable(); err != nil {
+		failf("Failed to check if analytics enabled: %s", err.Error())
+	} else if !available {
+		log.Errorf("No stdin data provided: only Bitrise CLI is intended to send build run analytics")
+
+		if err := cli.ShowAppHelp(c); err != nil {
+			failf("Failed to show help, error: %s", err)
+		}
+		return
+	}
+
+	if err := sendAnalytics(); err != nil {
+		failf("Failed to send analytics: %s", err)
 	}
 }
 
