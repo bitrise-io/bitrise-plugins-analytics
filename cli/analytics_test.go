@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"strings"
 	"testing"
 	"time"
@@ -101,18 +100,19 @@ var faildBuildBuildRunResult = models.BuildRunResultsModel{
 	},
 }
 
-func Test_readPayloadFromStdin(t *testing.T) {
-	if os.Getenv("READ_STDIN") == "1" {
-		payload, err := readPayload(os.Stdin)
-		require.NoError(t, err)
-		require.Equal(t, payload, faildBuildBuildRunResult)
-		return
-	}
-
-	cmd := exec.Command(os.Args[0], "-test.run=Test_readPayloadFromStdin")
-	cmd.Env = append(os.Environ(), "READ_STDIN=1")
-	cmd.Stdin = strings.NewReader(failedBuildPayload)
-
-	err := cmd.Run()
+func Test_readPayloadFromPipe(t *testing.T) {
+	r, w, err := os.Pipe()
 	require.NoError(t, err)
+
+	go func() {
+		n, err := w.Write([]byte(failedBuildPayload))
+		require.NoError(t, err)
+		require.Equal(t, len([]byte(failedBuildPayload)), n)
+
+		require.NoError(t, w.Close())
+	}()
+
+	payload, err := readPayload(r)
+	require.NoError(t, err)
+	require.Equal(t, payload, faildBuildBuildRunResult)
 }
