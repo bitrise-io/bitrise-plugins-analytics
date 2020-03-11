@@ -78,7 +78,7 @@ const successBuildPayload = `{
    "skipped_steps":null
 }`
 
-func Test_RunTest(t *testing.T) {
+func TestStdinPayload(t *testing.T) {
 	t.Log("success build")
 	{
 		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
@@ -118,5 +118,46 @@ func Test_RunTest(t *testing.T) {
 		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
 		require.NoError(t, err, out)
 	}
+}
 
+func TestEnvPayload(t *testing.T) {
+	t.Log("success build")
+	{
+		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
+		require.NoError(t, err)
+
+		envs := []string{
+			plugins.PluginInputDataDirKey + "=" + tmpDir,
+			bitriseConfigs.CIModeEnvKey + "=false",
+
+			plugins.PluginInputPluginModeKey + "=" + string(plugins.TriggerMode),
+			plugins.PluginInputFormatVersionKey + "=" + models.Version,
+			plugins.PluginInputPayloadKey + "=" + successBuildPayload,
+		}
+
+		cmd := command.New(binPth)
+		cmd.SetEnvs(envs...)
+		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
+		require.NoError(t, err, out)
+	}
+
+	t.Log("failed build")
+	{
+		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
+		require.NoError(t, err)
+
+		envs := []string{
+			plugins.PluginInputDataDirKey + "=" + tmpDir,
+			bitriseConfigs.CIModeEnvKey + "=false",
+
+			plugins.PluginInputPluginModeKey + "=" + string(plugins.TriggerMode),
+			plugins.PluginInputFormatVersionKey + "=" + models.Version,
+			plugins.PluginInputPayloadKey + "=" + failedBuildPayload,
+		}
+
+		cmd := command.New(binPth)
+		cmd.SetEnvs(envs...)
+		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
+		require.NoError(t, err, out)
+	}
 }
