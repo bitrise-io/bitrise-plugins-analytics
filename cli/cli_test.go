@@ -11,7 +11,7 @@ import (
 	"github.com/bitrise-io/go-utils/pathutil"
 )
 
-func Test_ensureFormatVersion(t *testing.T) {
+func Test_checkFormatVersion(t *testing.T) {
 
 	tests := []struct {
 		name                        string
@@ -58,13 +58,13 @@ func Test_ensureFormatVersion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			warn, err := ensureFormatVersion(tt.pluginFormatVersionStr, tt.hostBitriseFormatVersionStr)
+			warn, err := checkFormatVersion(tt.pluginFormatVersionStr, tt.hostBitriseFormatVersionStr)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ensureFormatVersion() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("checkFormatVersion() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if warn != tt.wantWarn {
-				t.Errorf("ensureFormatVersion() = %v, want %v", warn, tt.wantWarn)
+				t.Errorf("checkFormatVersion() = %v, want %v", warn, tt.wantWarn)
 			}
 		})
 	}

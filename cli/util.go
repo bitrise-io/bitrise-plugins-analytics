@@ -22,7 +22,7 @@ func isAnalyticsEnabled() (bool, error) {
 // minBitriseCLIVersion points to the version of Bitrise CLI introduceses Bitrise plugins.
 const minBitriseCLIVersion = "1.6.0"
 
-func ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr string) (string, error) {
+func checkFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr string) (string, error) {
 	if hostBitriseFormatVersionStr == "" {
 		return fmt.Sprintf("This analytics plugin version would need bitrise-cli version >= %s to submit analytics", minBitriseCLIVersion), nil
 	}
@@ -49,7 +49,7 @@ func ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr str
 func ensureBitriseCLIVersion() (string, error) {
 	hostBitriseFormatVersionStr := os.Getenv(plugins.PluginInputFormatVersionKey)
 	pluginFormatVersionStr := models.Version
-	return ensureFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr)
+	return checkFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr)
 }
 
 func isStdinDataAvailable() (bool, error) {
