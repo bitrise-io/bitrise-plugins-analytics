@@ -8,6 +8,7 @@ import (
 	"github.com/bitrise-io/bitrise-plugins-analytics/configs"
 	"github.com/bitrise-io/bitrise-plugins-analytics/version"
 	bitriseConfigs "github.com/bitrise-io/bitrise/configs"
+	"github.com/bitrise-io/bitrise/models"
 	"github.com/bitrise-io/bitrise/plugins"
 	log "github.com/bitrise-io/go-utils/log"
 	"github.com/urfave/cli"
@@ -53,14 +54,14 @@ func action(c *cli.Context) {
 		return
 	}
 
-	if warn, err := ensureBitriseCLIVersion(); err != nil {
+	if warn, err := checkFormatVersion(os.Getenv(plugins.PluginInputFormatVersionKey), models.Version); err != nil {
 		failf(err.Error())
 	} else if len(warn) > 0 {
 		log.Warnf(warn)
 	}
 
 	var t SourceType
-	if available, err := isStdinDataAvailable(); err != nil {
+	if available, err := hasContent(os.Stdin); err != nil {
 		failf("Failed to check if analytics enabled: %s", err.Error())
 	} else if available {
 		log.Debugf("stdin payload provided")

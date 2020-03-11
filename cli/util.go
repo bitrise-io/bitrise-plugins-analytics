@@ -5,8 +5,6 @@ import (
 	"os"
 
 	"github.com/bitrise-io/bitrise-plugins-analytics/configs"
-	"github.com/bitrise-io/bitrise/models"
-	"github.com/bitrise-io/bitrise/plugins"
 	ver "github.com/hashicorp/go-version"
 	"github.com/pkg/errors"
 )
@@ -46,14 +44,13 @@ func checkFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr stri
 	return "", nil
 }
 
-func ensureBitriseCLIVersion() (string, error) {
-	hostBitriseFormatVersionStr := os.Getenv(plugins.PluginInputFormatVersionKey)
-	pluginFormatVersionStr := models.Version
-	return checkFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr)
+// HasStat ...
+type HasStat interface {
+	Stat() (os.FileInfo, error)
 }
 
-func isStdinDataAvailable() (bool, error) {
-	fi, err := os.Stdin.Stat()
+func hasContent(f HasStat) (bool, error) {
+	fi, err := f.Stat()
 	if err != nil {
 		return false, err
 	}

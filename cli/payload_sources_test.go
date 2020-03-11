@@ -8,41 +8,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/bitrise-io/bitrise/models"
 	"github.com/bitrise-io/go-utils/pointers"
 	stepmanModels "github.com/bitrise-io/stepman/models"
+	"github.com/stretchr/testify/require"
 )
-
-func Test_readPayload(t *testing.T) {
-	tests := []struct {
-		name    string
-		r       io.Reader
-		want    models.BuildRunResultsModel
-		wantErr bool
-	}{
-		{
-			name:    "reading empty payload returns an error (no input provided)",
-			r:       strings.NewReader(""),
-			want:    models.BuildRunResultsModel{},
-			wantErr: true,
-		},
-		{
-			name:    "reading invalid payload returns an error",
-			r:       strings.NewReader("invalid json"),
-			want:    models.BuildRunResultsModel{},
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := readPayload(tt.r)
-			require.Equal(t, err != nil, tt.wantErr, fmt.Sprintf("expected error: %v, got: %v", tt.wantErr, err == nil))
-			require.Equal(t, tt.want, got)
-		})
-	}
-}
 
 const failedBuildPayload = `{
 	"stepman_updates":{
@@ -100,7 +70,71 @@ var faildBuildBuildRunResult = models.BuildRunResultsModel{
 	},
 }
 
-func Test_readPayloadFromPipe(t *testing.T) {
+func TestEnvPayloadSource(t *testing.T) {
+	tests := []struct {
+		name    string
+		e       string
+		want    models.BuildRunResultsModel
+		wantErr bool
+	}{
+		{
+			name:    "reading empty payload returns an error (no input provided)",
+			e:       "",
+			want:    models.BuildRunResultsModel{},
+			wantErr: true,
+		},
+		{
+			name:    "reading invalid payload returns an error",
+			e:       "invalid json",
+			want:    models.BuildRunResultsModel{},
+			wantErr: true,
+		},
+		{
+			name:    "parses valid payload",
+			e:       failedBuildPayload,
+			want:    faildBuildBuildRunResult,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := EnvPayloadSource{tt.e}.Payload()
+			require.Equal(t, err != nil, tt.wantErr, fmt.Sprintf("expected error: %v, got: %v", tt.wantErr, err == nil))
+			require.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestStdinPayloadSource(t *testing.T) {
+	tests := []struct {
+		name    string
+		r       io.Reader
+		want    models.BuildRunResultsModel
+		wantErr bool
+	}{
+		{
+			name:    "reading empty payload returns an error (no input provided)",
+			r:       strings.NewReader(""),
+			want:    models.BuildRunResultsModel{},
+			wantErr: true,
+		},
+		{
+			name:    "reading invalid payload returns an error",
+			r:       strings.NewReader("invalid json"),
+			want:    models.BuildRunResultsModel{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := StdinPayloadSource{tt.r}.Payload()
+			require.Equal(t, err != nil, tt.wantErr, fmt.Sprintf("expected error: %v, got: %v", tt.wantErr, err == nil))
+			require.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestStdinPayloadSourceReadsFromPipe(t *testing.T) {
 	r, w, err := os.Pipe()
 	require.NoError(t, err)
 
@@ -109,7 +143,7 @@ func Test_readPayloadFromPipe(t *testing.T) {
 	require.Equal(t, len([]byte(failedBuildPayload)), n)
 	require.NoError(t, w.Close())
 
-	payload, err := readPayload(r)
+	payload, err := StdinPayloadSource{r}.Payload()
 	require.NoError(t, err)
 	require.Equal(t, payload, faildBuildBuildRunResult)
 }
