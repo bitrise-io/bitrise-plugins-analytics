@@ -59,10 +59,17 @@ func action(c *cli.Context) {
 		log.Warnf(warn)
 	}
 
+	var t SourceType
 	if available, err := isStdinDataAvailable(); err != nil {
 		failf("Failed to check if analytics enabled: %s", err.Error())
-	} else if !available {
-		log.Errorf("No stdin data provided: only Bitrise CLI is intended to send build run analytics")
+	} else if available {
+		log.Debugf("stdin payload provided")
+		t = StdinSource
+	} else if os.Getenv(plugins.PluginInputPayloadKey) != "" {
+		log.Debugf("env payload provided")
+		t = EnvSource
+	} else {
+		log.Errorf("No stdin data nor env data provided: only Bitrise CLI is intended to send build run analytics")
 
 		if err := cli.ShowAppHelp(c); err != nil {
 			failf("Failed to show help, error: %s", err)
@@ -70,7 +77,8 @@ func action(c *cli.Context) {
 		return
 	}
 
-	if err := sendAnalytics(); err != nil {
+	source := PayloadSourceFactory(t)
+	if err := sendAnalytics(source); err != nil {
 		failf("Failed to send analytics: %s", err)
 	}
 }
