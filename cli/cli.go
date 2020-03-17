@@ -28,7 +28,7 @@ var flags = []cli.Flag{
 }
 
 func before(c *cli.Context) error {
-	configs.DataDir = os.Getenv(plugins.PluginInputDataDirKey)
+	configs.DataDir = os.Getenv(plugins.PluginConfigDataDirKey)
 	configs.IsCIMode = (os.Getenv(bitriseConfigs.CIModeEnvKey) == "true")
 	return nil
 }
@@ -38,7 +38,7 @@ func printVersion(c *cli.Context) {
 }
 
 func action(c *cli.Context) {
-	if os.Getenv(plugins.PluginInputPluginModeKey) != string(plugins.TriggerMode) {
+	if os.Getenv(plugins.PluginConfigPluginModeKey) != string(plugins.TriggerMode) {
 		log.Errorf("Required envs not set: only Bitrise CLI is intended to send build run analytics")
 
 		if err := cli.ShowAppHelp(c); err != nil {
@@ -54,7 +54,7 @@ func action(c *cli.Context) {
 		return
 	}
 
-	if warn, err := checkFormatVersion(os.Getenv(plugins.PluginInputFormatVersionKey), models.Version); err != nil {
+	if warn, err := checkFormatVersion(os.Getenv(plugins.PluginConfigFormatVersionKey), models.Version); err != nil {
 		failf(err.Error())
 	} else if len(warn) > 0 {
 		log.Warnf(warn)
@@ -66,7 +66,7 @@ func action(c *cli.Context) {
 	} else if available {
 		log.Debugf("stdin payload provided")
 		t = StdinSource
-	} else if os.Getenv(plugins.PluginInputPayloadKey) != "" {
+	} else if os.Getenv(configs.PluginConfigPayloadKey) != "" {
 		log.Debugf("env payload provided")
 		t = EnvSource
 	} else {

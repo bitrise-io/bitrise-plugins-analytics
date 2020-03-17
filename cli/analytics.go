@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/bitrise-io/bitrise-plugins-analytics/analytics"
+	"github.com/bitrise-io/bitrise-plugins-analytics/configs"
 	"github.com/bitrise-io/bitrise/models"
-	"github.com/bitrise-io/bitrise/plugins"
 	log "github.com/bitrise-io/go-utils/log"
 )
 
@@ -29,7 +29,7 @@ func PayloadSourceFactory(t SourceType) PayloadSource {
 	if t == StdinSource {
 		return StdinPayloadSource{os.Stdin}
 	}
-	return EnvPayloadSource{os.Getenv(plugins.PluginInputPayloadKey)}
+	return EnvPayloadSource{os.Getenv(configs.PluginConfigPayloadKey)}
 }
 
 func sendAnalytics(source PayloadSource) error {

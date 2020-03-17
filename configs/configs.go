@@ -10,6 +10,9 @@ import (
 	"github.com/bitrise-io/go-utils/pathutil"
 )
 
+// PluginConfigPayloadKey for backward comaptibility
+const PluginConfigPayloadKey = "BITRISE_PLUGIN_INPUT_PAYLOAD"
+
 //=======================================
 // Variables
 //=======================================

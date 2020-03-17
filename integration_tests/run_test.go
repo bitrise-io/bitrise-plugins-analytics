@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/bitrise-io/bitrise-plugins-analytics/configs"
 	bitriseConfigs "github.com/bitrise-io/bitrise/configs"
 	"github.com/bitrise-io/bitrise/models"
 	"github.com/bitrise-io/bitrise/plugins"
@@ -85,11 +86,11 @@ func TestStdinPayload(t *testing.T) {
 		require.NoError(t, err)
 
 		envs := []string{
-			plugins.PluginInputDataDirKey + "=" + tmpDir,
+			plugins.PluginConfigDataDirKey + "=" + tmpDir,
 			bitriseConfigs.CIModeEnvKey + "=false",
 
-			plugins.PluginInputPluginModeKey + "=" + string(plugins.TriggerMode),
-			plugins.PluginInputFormatVersionKey + "=" + models.Version,
+			plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
+			plugins.PluginConfigFormatVersionKey + "=" + models.Version,
 		}
 
 		cmd := command.New(binPth)
@@ -105,11 +106,11 @@ func TestStdinPayload(t *testing.T) {
 		require.NoError(t, err)
 
 		envs := []string{
-			plugins.PluginInputDataDirKey + "=" + tmpDir,
+			plugins.PluginConfigDataDirKey + "=" + tmpDir,
 			bitriseConfigs.CIModeEnvKey + "=false",
 
-			plugins.PluginInputPluginModeKey + "=" + string(plugins.TriggerMode),
-			plugins.PluginInputFormatVersionKey + "=" + models.Version,
+			plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
+			plugins.PluginConfigFormatVersionKey + "=" + models.Version,
 		}
 
 		cmd := command.New(binPth)
@@ -127,12 +128,12 @@ func TestEnvPayload(t *testing.T) {
 		require.NoError(t, err)
 
 		envs := []string{
-			plugins.PluginInputDataDirKey + "=" + tmpDir,
+			plugins.PluginConfigDataDirKey + "=" + tmpDir,
 			bitriseConfigs.CIModeEnvKey + "=false",
 
-			plugins.PluginInputPluginModeKey + "=" + string(plugins.TriggerMode),
-			plugins.PluginInputFormatVersionKey + "=" + models.Version,
-			plugins.PluginInputPayloadKey + "=" + successBuildPayload,
+			plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
+			plugins.PluginConfigFormatVersionKey + "=" + models.Version,
+			configs.PluginConfigPayloadKey + "=" + successBuildPayload,
 		}
 
 		cmd := command.New(binPth)
@@ -147,12 +148,12 @@ func TestEnvPayload(t *testing.T) {
 		require.NoError(t, err)
 
 		envs := []string{
-			plugins.PluginInputDataDirKey + "=" + tmpDir,
+			plugins.PluginConfigDataDirKey + "=" + tmpDir,
 			bitriseConfigs.CIModeEnvKey + "=false",
 
-			plugins.PluginInputPluginModeKey + "=" + string(plugins.TriggerMode),
-			plugins.PluginInputFormatVersionKey + "=" + models.Version,
-			plugins.PluginInputPayloadKey + "=" + failedBuildPayload,
+			plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
+			plugins.PluginConfigFormatVersionKey + "=" + models.Version,
+			configs.PluginConfigPayloadKey + "=" + failedBuildPayload,
 		}
 
 		cmd := command.New(binPth)

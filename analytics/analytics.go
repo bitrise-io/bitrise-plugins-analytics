@@ -105,7 +105,7 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 		AppSlug:       os.Getenv(appSlugEnvKey),
 		BuildSlug:     os.Getenv(buildSlugEnvKey),
 		Status:        buildStatus(buildRunResults.IsBuildFailed()),
-		CLIVersion:    os.Getenv(plugins.PluginInputBitriseVersionKey),
+		CLIVersion:    os.Getenv(plugins.PluginConfigBitriseVersionKey),
 		StepAnalytics: stepAnalytics,
 		RepositoryID:  os.Getenv(repoSlug),
 		WorkflowName:  os.Getenv(workflowName),
