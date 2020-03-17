@@ -11,7 +11,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:2eba4a681964a1914fca5100670e6784880761efde321f0e57a5e5e20566effd"
+  digest = "1:fac11977fa2cc7b09c7f7fa37dc5b86c7d9b373ae28f6c65d4e3e576279e5de8"
   name = "github.com/bitrise-io/bitrise"
   packages = [
     "configs",
@@ -23,7 +23,7 @@
     "version",
   ]
   pruneopts = "UT"
-  revision = "15535322dc6592a3168d16ec97b8d3fc658bd939"
+  revision = "5c433e00ad289dd2904c5de1049a084803a54561"
 
 [[projects]]
   branch = "master"
@@ -127,14 +127,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:dc4b3fb403f49913f200a8c16cfe58571f768f227ccd5cedec0f0b0b0dce3d9f"
+  digest = "1:efdc7cc78090c46a7e8d35d393bf814590cd8fc65b8d62043f001fd60fed62be"
   name = "github.com/stretchr/testify"
   packages = [
     "assert",
     "require",
   ]
   pruneopts = "UT"
-  revision = "6be346c1f15898af82c7c86dbad99cc9d7fee6f2"
+  revision = "f6cbfc0d0341bd4f04831a275adbef45a2221690"
 
 [[projects]]
   digest = "1:1d3ef3dd057d2eb1819e945f88cc83835296c9b7fb13ad3194c937c4e2891fee"
@@ -150,18 +150,18 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "78000ba7a073cafc0278790f6bce552a0f25850e"
+  revision = "f7b00557c8c46a1ea4b035cae84f52028c2c0564"
 
 [[projects]]
   branch = "master"
-  digest = "1:e32edd8d81fe0447cb6855e2d2b0549b63717539513e09b3a1e4bb20d48f46c6"
+  digest = "1:adfbfe0bbb10df3375281317f1f9ce041773f1394819c825f044a0477af57c44"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "5c8b2ff67527cb88b770f693cebf3799036d8bc0"
+  revision = "a7d97aace0b03bedead413ec782269d62e032341"
 
 [[projects]]
   digest = "1:55b110c99c5fdc4f14930747326acce56b52cfce60b24b1c03ef686ac0e46bb1"
