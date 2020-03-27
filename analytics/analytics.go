@@ -19,14 +19,12 @@ import (
 //=======================================
 
 const (
-	stackIDEnvKey         = "BITRISE_STACK_ID"
-	appSlugEnvKey         = "BITRISE_APP_SLUG"
-	buildSlugEnvKey       = "BITRISE_BUILD_SLUG"
-	workflowName          = "BITRISE_TRIGGERED_WORKFLOW_TITLE"
-	repoSlug              = "BITRISEIO_GIT_REPOSITORY_SLUG"
-	analyticsBaseURL      = "https://bitrise-step-analytics.herokuapp.com"
-	simulatorDeviceKey    = "simulator_device"
-	simulatorOsVersionKey = "simulator_os_version"
+	stackIDEnvKey    = "BITRISE_STACK_ID"
+	appSlugEnvKey    = "BITRISE_APP_SLUG"
+	buildSlugEnvKey  = "BITRISE_BUILD_SLUG"
+	workflowName     = "BITRISE_TRIGGERED_WORKFLOW_TITLE"
+	repoSlug         = "BITRISEIO_GIT_REPOSITORY_SLUG"
+	analyticsBaseURL = "https://bitrise-step-analytics.herokuapp.com"
 )
 
 //=======================================
@@ -50,15 +48,14 @@ type BuildAnalytics struct {
 
 // StepAnalytics ...
 type StepAnalytics struct {
-	StepID             string        `json:"step_id"`
-	StepTitle          string        `json:"step_title"`
-	StepVersion        string        `json:"step_verion"`
-	StepSource         string        `json:"step_source"`
-	Status             string        `json:"status"`
-	Runtime            time.Duration `json:"run_time"`
-	StartTime          time.Time     `json:"start_time"`
-	SimulatorDevice    string        `json:"simulator_device"`
-	SimulatorOsVersion string        `json:"simulator_os_version"`
+	StepID      string            `json:"step_id"`
+	StepTitle   string            `json:"step_title"`
+	StepVersion string            `json:"step_verion"`
+	StepSource  string            `json:"step_source"`
+	StepInputs  map[string]string `json:"step_inputs"`
+	Status      string            `json:"status"`
+	Runtime     time.Duration     `json:"run_time"`
+	StartTime   time.Time         `json:"start_time"`
 }
 
 //=======================================
@@ -90,15 +87,14 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 	)
 	for _, stepResult := range buildRunResults.OrderedResults() {
 		stepAnalytics, runtime = append(stepAnalytics, StepAnalytics{
-			StepID:             stepResult.StepInfo.ID,
-			StepTitle:          pointers.StringWithDefault(stepResult.StepInfo.Step.Title, ""),
-			StepVersion:        stepResult.StepInfo.Version,
-			StepSource:         pointers.StringWithDefault(stepResult.StepInfo.Step.SourceCodeURL, ""),
-			Status:             stepStatus(stepResult.Status),
-			Runtime:            stepResult.RunTime,
-			StartTime:          stepResult.StartTime,
-			SimulatorDevice:    stepResult.StepInputs[simulatorDeviceKey],
-			SimulatorOsVersion: stepResult.StepInputs[simulatorOsVersionKey],
+			StepID:      stepResult.StepInfo.ID,
+			StepTitle:   pointers.StringWithDefault(stepResult.StepInfo.Step.Title, ""),
+			StepVersion: stepResult.StepInfo.Version,
+			StepSource:  pointers.StringWithDefault(stepResult.StepInfo.Step.SourceCodeURL, ""),
+			StepInputs:  stepResult.StepInputs,
+			Status:      stepStatus(stepResult.Status),
+			Runtime:     stepResult.RunTime,
+			StartTime:   stepResult.StartTime,
 		}), runtime+stepResult.RunTime
 	}
 
