@@ -85,13 +85,26 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 		runtime       time.Duration
 		stepAnalytics []StepAnalytics
 	)
+
+	stepInputWhitelist := map[string]bool{
+		"simulator_device":     true,
+		"simulator_os_version": true,
+	}
+
 	for _, stepResult := range buildRunResults.OrderedResults() {
+		filteredStepInputs := make(map[string]string)
+		for key, value := range stepResult.StepInputs {
+			if stepInputWhitelist[key] {
+				filteredStepInputs[key] = value
+			}
+		}
+
 		stepAnalytics, runtime = append(stepAnalytics, StepAnalytics{
 			StepID:      stepResult.StepInfo.ID,
 			StepTitle:   pointers.StringWithDefault(stepResult.StepInfo.Step.Title, ""),
 			StepVersion: stepResult.StepInfo.Version,
 			StepSource:  pointers.StringWithDefault(stepResult.StepInfo.Step.SourceCodeURL, ""),
-			StepInputs:  stepResult.StepInputs,
+			StepInputs:  filteredStepInputs,
 			Status:      stepStatus(stepResult.Status),
 			Runtime:     stepResult.RunTime,
 			StartTime:   stepResult.StartTime,
