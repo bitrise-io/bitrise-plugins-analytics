@@ -94,7 +94,7 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 	}
 
 	for _, stepResult := range buildRunResults.OrderedResults() {
-		filteredStepInputs := make(map[string]string)
+		filteredStepInputs := map[string]string{}
 		for key, value := range stepResult.StepInputs {
 			if stepInputWhitelist[stepResult.StepInfo.ID][key] {
 				filteredStepInputs[key] = value
