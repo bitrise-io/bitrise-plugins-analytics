@@ -86,15 +86,17 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 		stepAnalytics []StepAnalytics
 	)
 
-	stepInputWhitelist := map[string]bool{
-		"simulator_device":     true,
-		"simulator_os_version": true,
+	stepInputWhitelist := map[string]map[string]bool{
+		"xcode-test": map[string]bool{
+			"simulator_device":     true,
+			"simulator_os_version": true,
+		},
 	}
 
 	for _, stepResult := range buildRunResults.OrderedResults() {
 		filteredStepInputs := make(map[string]string)
 		for key, value := range stepResult.StepInputs {
-			if stepInputWhitelist[key] {
+			if stepInputWhitelist[stepResult.StepInfo.ID][key] {
 				filteredStepInputs[key] = value
 			}
 		}
