@@ -126,7 +126,7 @@ This new release introduces:
 
 * bug: fix tty detection with custom out (#471)
 
-# 0.11.0
+# 0.12.0
 
 * performance: Use bufferpool to allocate (#370)
 * terminal: terminal detection for app-engine (#343)
