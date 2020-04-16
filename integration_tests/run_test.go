@@ -179,4 +179,25 @@ func TestNoPayloadReportsError(t *testing.T) {
 	cmd.SetEnvs(envs...)
 	out, err := cmd.RunAndReturnTrimmedCombinedOutput()
 	require.Error(t, err, out)
+	require.Contains(t, out, "No stdin data nor env data provided: only Bitrise CLI is intended to send build run analytics")
+}
+
+func TestZeroLengthPayloadReportsError(t *testing.T) {
+	tmpDir, err := pathutil.NormalizedOSTempDirPath("")
+	require.NoError(t, err)
+
+	envs := []string{
+		plugins.PluginConfigDataDirKey + "=" + tmpDir,
+		bitriseConfigs.CIModeEnvKey + "=false",
+
+		plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
+		plugins.PluginConfigFormatVersionKey + "=" + models.Version,
+	}
+
+	cmd := command.New(binPth)
+	cmd.SetEnvs(envs...)
+	cmd.SetStdin(strings.NewReader(""))
+	out, err := cmd.RunAndReturnTrimmedCombinedOutput()
+	require.Error(t, err, out)
+	require.Contains(t, out, "Failed to send analytics: failed to read payload: nothing to read")
 }
