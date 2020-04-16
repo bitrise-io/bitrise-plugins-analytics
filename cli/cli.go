@@ -70,7 +70,7 @@ func action(c *cli.Context) {
 		log.Debugf("env payload provided")
 		t = EnvSource
 	} else {
-		log.Errorf("No stdin data nor env data provided: only Bitrise CLI is intended to send build run analytics")
+		failf("No stdin data nor env data provided: only Bitrise CLI is intended to send build run analytics")
 
 		if err := cli.ShowAppHelp(c); err != nil {
 			failf("Failed to show help, error: %s", err)

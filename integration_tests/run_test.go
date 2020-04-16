@@ -162,3 +162,43 @@ func TestEnvPayload(t *testing.T) {
 		require.NoError(t, err, out)
 	}
 }
+
+func TestNoPayloadReportsError(t *testing.T) {
+	t.Log("success build")
+	{
+		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
+		require.NoError(t, err)
+
+		envs := []string{
+			plugins.PluginConfigDataDirKey + "=" + tmpDir,
+			bitriseConfigs.CIModeEnvKey + "=false",
+
+			plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
+			plugins.PluginConfigFormatVersionKey + "=" + models.Version,
+		}
+
+		cmd := command.New(binPth)
+		cmd.SetEnvs(envs...)
+		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
+		require.Error(t, err, out)
+	}
+
+	t.Log("failed build")
+	{
+		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
+		require.NoError(t, err)
+
+		envs := []string{
+			plugins.PluginConfigDataDirKey + "=" + tmpDir,
+			bitriseConfigs.CIModeEnvKey + "=false",
+
+			plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
+			plugins.PluginConfigFormatVersionKey + "=" + models.Version,
+		}
+
+		cmd := command.New(binPth)
+		cmd.SetEnvs(envs...)
+		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
+		require.Error(t, err, out)
+	}
+}
