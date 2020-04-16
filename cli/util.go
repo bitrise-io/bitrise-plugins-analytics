@@ -55,6 +55,9 @@ func hasContent(f HasStat) (bool, error) {
 		return false, err
 	}
 
-	hasContent := fi.Mode()&os.ModeNamedPipe != 0
-	return hasContent, nil
+	if fi.Mode()&os.ModeNamedPipe != 0 {
+		return true, nil
+	}
+
+	return fi.Size() > 0, nil
 }
