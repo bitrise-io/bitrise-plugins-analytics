@@ -164,41 +164,19 @@ func TestEnvPayload(t *testing.T) {
 }
 
 func TestNoPayloadReportsError(t *testing.T) {
-	t.Log("success build")
-	{
-		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
-		require.NoError(t, err)
+	tmpDir, err := pathutil.NormalizedOSTempDirPath("")
+	require.NoError(t, err)
 
-		envs := []string{
-			plugins.PluginConfigDataDirKey + "=" + tmpDir,
-			bitriseConfigs.CIModeEnvKey + "=false",
+	envs := []string{
+		plugins.PluginConfigDataDirKey + "=" + tmpDir,
+		bitriseConfigs.CIModeEnvKey + "=false",
 
-			plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
-			plugins.PluginConfigFormatVersionKey + "=" + models.Version,
-		}
-
-		cmd := command.New(binPth)
-		cmd.SetEnvs(envs...)
-		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
-		require.Error(t, err, out)
+		plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
+		plugins.PluginConfigFormatVersionKey + "=" + models.Version,
 	}
 
-	t.Log("failed build")
-	{
-		tmpDir, err := pathutil.NormalizedOSTempDirPath("")
-		require.NoError(t, err)
-
-		envs := []string{
-			plugins.PluginConfigDataDirKey + "=" + tmpDir,
-			bitriseConfigs.CIModeEnvKey + "=false",
-
-			plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
-			plugins.PluginConfigFormatVersionKey + "=" + models.Version,
-		}
-
-		cmd := command.New(binPth)
-		cmd.SetEnvs(envs...)
-		out, err := cmd.RunAndReturnTrimmedCombinedOutput()
-		require.Error(t, err, out)
-	}
+	cmd := command.New(binPth)
+	cmd.SetEnvs(envs...)
+	out, err := cmd.RunAndReturnTrimmedCombinedOutput()
+	require.Error(t, err, out)
 }
