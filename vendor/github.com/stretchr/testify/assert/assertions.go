@@ -19,7 +19,7 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/pmezard/go-difflib/difflib"
-	yaml "gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v3"
 )
 
 //go:generate sh -c "cd ../_codegen && go build && cd - && ../_codegen/_codegen -output-package=assert -template=assertion_format.go.tmpl"
@@ -45,7 +45,7 @@ type BoolAssertionFunc func(TestingT, bool, ...interface{}) bool
 // for table driven tests.
 type ErrorAssertionFunc func(TestingT, error, ...interface{}) bool
 
-// Comparison a custom function that returns true on success and false on failure
+// Comparison is a custom function that returns true on success and false on failure
 type Comparison func() (success bool)
 
 /*
@@ -496,11 +496,11 @@ func Exactly(t TestingT, expected, actual interface{}, msgAndArgs ...interface{}
 //
 //    assert.NotNil(t, err)
 func NotNil(t TestingT, object interface{}, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
 	if !isNil(object) {
 		return true
+	}
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
 	}
 	return Fail(t, "Expected value not to be nil.", msgAndArgs...)
 }
@@ -542,11 +542,11 @@ func isNil(object interface{}) bool {
 //
 //    assert.Nil(t, err)
 func Nil(t TestingT, object interface{}, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
 	if isNil(object) {
 		return true
+	}
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
 	}
 	return Fail(t, fmt.Sprintf("Expected nil, but got: %#v", object), msgAndArgs...)
 }
@@ -584,12 +584,11 @@ func isEmpty(object interface{}) bool {
 //
 //  assert.Empty(t, obj)
 func Empty(t TestingT, object interface{}, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
-
 	pass := isEmpty(object)
 	if !pass {
+		if h, ok := t.(tHelper); ok {
+			h.Helper()
+		}
 		Fail(t, fmt.Sprintf("Should be empty, but was %v", object), msgAndArgs...)
 	}
 
@@ -604,12 +603,11 @@ func Empty(t TestingT, object interface{}, msgAndArgs ...interface{}) bool {
 //    assert.Equal(t, "two", obj[1])
 //  }
 func NotEmpty(t TestingT, object interface{}, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
-
 	pass := !isEmpty(object)
 	if !pass {
+		if h, ok := t.(tHelper); ok {
+			h.Helper()
+		}
 		Fail(t, fmt.Sprintf("Should NOT be empty, but was %v", object), msgAndArgs...)
 	}
 
@@ -652,16 +650,10 @@ func Len(t TestingT, object interface{}, length int, msgAndArgs ...interface{}) 
 //
 //    assert.True(t, myBool)
 func True(t TestingT, value bool, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
-	if h, ok := t.(interface {
-		Helper()
-	}); ok {
-		h.Helper()
-	}
-
 	if !value {
+		if h, ok := t.(tHelper); ok {
+			h.Helper()
+		}
 		return Fail(t, "Should be true", msgAndArgs...)
 	}
 
@@ -673,11 +665,10 @@ func True(t TestingT, value bool, msgAndArgs ...interface{}) bool {
 //
 //    assert.False(t, myBool)
 func False(t TestingT, value bool, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
-
 	if value {
+		if h, ok := t.(tHelper); ok {
+			h.Helper()
+		}
 		return Fail(t, "Should be false", msgAndArgs...)
 	}
 
@@ -1110,6 +1101,8 @@ func toFloat(x interface{}) (float64, bool) {
 	xok := true
 
 	switch xn := x.(type) {
+	case uint:
+		xf = float64(xn)
 	case uint8:
 		xf = float64(xn)
 	case uint16:
@@ -1245,12 +1238,18 @@ func calcRelativeError(expected, actual interface{}) (float64, error) {
 	if !aok {
 		return 0, fmt.Errorf("expected value %q cannot be converted to float", expected)
 	}
+	if math.IsNaN(af) {
+		return 0, errors.New("expected value must not be NaN")
+	}
 	if af == 0 {
 		return 0, fmt.Errorf("expected value must have a value other than zero to calculate the relative error")
 	}
 	bf, bok := toFloat(actual)
 	if !bok {
 		return 0, fmt.Errorf("actual value %q cannot be converted to float", actual)
+	}
+	if math.IsNaN(bf) {
+		return 0, errors.New("actual value must not be NaN")
 	}
 
 	return math.Abs(af-bf) / math.Abs(af), nil
@@ -1260,6 +1259,9 @@ func calcRelativeError(expected, actual interface{}) (float64, error) {
 func InEpsilon(t TestingT, expected, actual interface{}, epsilon float64, msgAndArgs ...interface{}) bool {
 	if h, ok := t.(tHelper); ok {
 		h.Helper()
+	}
+	if math.IsNaN(epsilon) {
+		return Fail(t, "epsilon must not be NaN")
 	}
 	actualEpsilon, err := calcRelativeError(expected, actual)
 	if err != nil {
@@ -1308,10 +1310,10 @@ func InEpsilonSlice(t TestingT, expected, actual interface{}, epsilon float64, m
 //	   assert.Equal(t, expectedObj, actualObj)
 //   }
 func NoError(t TestingT, err error, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
 	if err != nil {
+		if h, ok := t.(tHelper); ok {
+			h.Helper()
+		}
 		return Fail(t, fmt.Sprintf("Received unexpected error:\n%+v", err), msgAndArgs...)
 	}
 
@@ -1325,11 +1327,10 @@ func NoError(t TestingT, err error, msgAndArgs ...interface{}) bool {
 //	   assert.Equal(t, expectedError, err)
 //   }
 func Error(t TestingT, err error, msgAndArgs ...interface{}) bool {
-	if h, ok := t.(tHelper); ok {
-		h.Helper()
-	}
-
 	if err == nil {
+		if h, ok := t.(tHelper); ok {
+			h.Helper()
+		}
 		return Fail(t, "An error is expected but got nil.", msgAndArgs...)
 	}
 

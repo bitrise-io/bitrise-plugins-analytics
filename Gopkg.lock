@@ -2,16 +2,16 @@
 
 
 [[projects]]
-  digest = "1:04457f9f6f3ffc5fea48e71d62f2ca256637dee0a04d710288e27e05c8b41976"
+  digest = "1:05eebdd5727fea23083fce0d98d307d70c86baed644178e81608aaa9f09ea469"
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
   pruneopts = "UT"
-  revision = "839c75faf7f98a33d445d181f3018b5c3409a45e"
-  version = "v1.4.2"
+  revision = "60c74ad9be0d874af0ab0daef6ab07c5c5911f0d"
+  version = "v1.6.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:fac11977fa2cc7b09c7f7fa37dc5b86c7d9b373ae28f6c65d4e3e576279e5de8"
+  digest = "1:951addb9a47aada387d35b85beac8266fe9b5fd057893b238715cf3e41b76fc4"
   name = "github.com/bitrise-io/bitrise"
   packages = [
     "configs",
@@ -23,7 +23,15 @@
     "version",
   ]
   pruneopts = "UT"
-  revision = "5c433e00ad289dd2904c5de1049a084803a54561"
+  revision = "c57128e5839f3b03f9126f46b162981634ab682d"
+
+[[projects]]
+  branch = "master"
+  digest = "1:969ac732d25432ee6e4bc3806e5b4fc8dce5046b654295f3182316a79bcfb990"
+  name = "github.com/bitrise-io/bitrise-step-analytics"
+  packages = ["models"]
+  pruneopts = "UT"
+  revision = "d5bb98870a6ba5614014223aa18be26e6a6d9d92"
 
 [[projects]]
   branch = "master"
@@ -31,7 +39,7 @@
   name = "github.com/bitrise-io/envman"
   packages = ["models"]
   pruneopts = "UT"
-  revision = "24a8f72875981710a8b21e60d81c4126a3af3c67"
+  revision = "919e33f391ee97e87193ae604967f02707a64e37"
 
 [[projects]]
   branch = "master"
@@ -59,7 +67,7 @@
   name = "github.com/bitrise-io/stepman"
   packages = ["models"]
   pruneopts = "UT"
-  revision = "15ac97d3ea158d6bf4ee951927de5df145c78ead"
+  revision = "83b3b9f433483b87e106bab9f479148092562cfa"
 
 [[projects]]
   digest = "1:7cb4fdca4c251b3ef8027c90ea35f70c7b661a593b9eeae34753c65499098bb1"
@@ -86,12 +94,12 @@
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:31e761d97c76151dde79e9d28964a812c46efc5baee4085b86f68f0c654450de"
+  digest = "1:09cb61dc19af93deae01587e2fdb1c081e0bf48f1a5ad5fa24f48750dc57dce8"
   name = "github.com/konsorten/go-windows-terminal-sequences"
   packages = ["."]
   pruneopts = "UT"
-  revision = "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
-  version = "v1.0.2"
+  revision = "edb144dfd453055e1e49a3d8b410a660b5a87613"
+  version = "v1.0.3"
 
 [[projects]]
   branch = "master"
@@ -127,14 +135,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:efdc7cc78090c46a7e8d35d393bf814590cd8fc65b8d62043f001fd60fed62be"
+  digest = "1:404d0f344e01cee96b3ffb323d538446bc2c343d404881d713fd0ca11c06b474"
   name = "github.com/stretchr/testify"
   packages = [
     "assert",
     "require",
   ]
   pruneopts = "UT"
-  revision = "f6cbfc0d0341bd4f04831a275adbef45a2221690"
+  revision = "e72b029e2a755a1eeb0ee541dd9cc728668edd95"
 
 [[projects]]
   digest = "1:1d3ef3dd057d2eb1819e945f88cc83835296c9b7fb13ad3194c937c4e2891fee"
@@ -146,35 +154,45 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:ad2bf20798504fbde0c5bdf5ee83d3354fb101d32c5b2267f811c1958b91b0ab"
+  digest = "1:c381e2867d447cca3e74dbfb0c8ed371a4583c694b35838c5c642a2b79480fc6"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "f7b00557c8c46a1ea4b035cae84f52028c2c0564"
+  revision = "06a226fb4e3765ef3f48aa2852b401bc7b98e981"
 
 [[projects]]
   branch = "master"
-  digest = "1:adfbfe0bbb10df3375281317f1f9ce041773f1394819c825f044a0477af57c44"
+  digest = "1:347ef95ea9998ca88d01618a6e4df19486e81b2456234da341377fbec9285627"
   name = "golang.org/x/sys"
   packages = [
+    "internal/unsafeheader",
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "a7d97aace0b03bedead413ec782269d62e032341"
+  revision = "1151b9dac4a98d49ef7f80f07ddd826ff51e0b36"
 
 [[projects]]
-  digest = "1:55b110c99c5fdc4f14930747326acce56b52cfce60b24b1c03ef686ac0e46bb1"
+  digest = "1:d7f1bd887dc650737a421b872ca883059580e9f8314d601f88025df4f4802dce"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
   pruneopts = "UT"
-  revision = "53403b58ad1b561927d19068c655246f2db79d48"
-  version = "v2.2.8"
+  revision = "0b1645d91e851e735d3e23330303ce81f70adbe3"
+  version = "v2.3.0"
+
+[[projects]]
+  branch = "v3"
+  digest = "1:f87d6c8edf5e57ae4a355abc05aca1dbf38b073068bba96c1fbbff852a1e2fd3"
+  name = "gopkg.in/yaml.v3"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "2ff61e1afc866138abf1a8adf3cc89721090ac31"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/bitrise-io/bitrise-step-analytics/models",
     "github.com/bitrise-io/bitrise/configs",
     "github.com/bitrise-io/bitrise/models",
     "github.com/bitrise-io/bitrise/plugins",
