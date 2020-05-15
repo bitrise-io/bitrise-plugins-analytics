@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	analyticsModels "github.com/bitrise-io/bitrise-step-analytics/models"
 	models "github.com/bitrise-io/bitrise/models"
 	"github.com/bitrise-io/bitrise/plugins"
 	"github.com/bitrise-io/go-utils/log"
@@ -26,41 +27,6 @@ const (
 	repoSlug         = "BITRISEIO_GIT_REPOSITORY_SLUG"
 	analyticsBaseURL = "https://bitrise-step-analytics.herokuapp.com"
 )
-
-//=======================================
-// Models
-//=======================================
-
-// BuildAnalytics ...
-type BuildAnalytics struct {
-	Status        string          `json:"status"`
-	StackID       string          `json:"stack_id"`
-	AppSlug       string          `json:"app_slug"`
-	Runtime       time.Duration   `json:"run_time"`
-	Platform      string          `json:"platform"`
-	BuildSlug     string          `json:"build_slug"`
-	StartTime     time.Time       `json:"start_time"`
-	CLIVersion    string          `json:"cli_version"`
-	StepAnalytics []StepAnalytics `json:"step_analytics"`
-	RepositoryID  string          `json:"repo_id"`
-	WorkflowName  string          `json:"workflow_name"`
-}
-
-// StepAnalytics ...
-type StepAnalytics struct {
-	StepID      string            `json:"step_id"`
-	StepTitle   string            `json:"step_title"`
-	StepVersion string            `json:"step_verion"`
-	StepSource  string            `json:"step_source"`
-	StepInputs  map[string]string `json:"step_inputs"`
-	Status      string            `json:"status"`
-	Runtime     time.Duration     `json:"run_time"`
-	StartTime   time.Time         `json:"start_time"`
-}
-
-//=======================================
-// Main
-//=======================================
 
 func buildStatus(buildFailed bool) string {
 	return map[bool]string{false: "successful", true: "failed"}[buildFailed]
@@ -83,7 +49,7 @@ func stepStatus(i int) string {
 func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error {
 	var (
 		runtime       time.Duration
-		stepAnalytics []StepAnalytics
+		stepAnalytics []analyticsModels.StepAnalytics
 	)
 
 	stepInputWhitelist := map[string]map[string]bool{
@@ -101,7 +67,7 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 			}
 		}
 
-		stepAnalytics, runtime = append(stepAnalytics, StepAnalytics{
+		stepAnalytics, runtime = append(stepAnalytics, analyticsModels.StepAnalytics{
 			StepID:      stepResult.StepInfo.ID,
 			StepTitle:   pointers.StringWithDefault(stepResult.StepInfo.Step.Title, ""),
 			StepVersion: stepResult.StepInfo.Version,
@@ -114,7 +80,7 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 	}
 
 	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(BuildAnalytics{
+	if err := json.NewEncoder(&body).Encode(analyticsModels.BuildAnalytics{
 		Runtime:       runtime,
 		StartTime:     buildRunResults.StartTime,
 		Platform:      buildRunResults.ProjectType,
