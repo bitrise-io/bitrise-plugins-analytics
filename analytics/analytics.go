@@ -20,7 +20,7 @@ import (
 //=======================================
 
 const (
-	stackIDEnvKey    = "BITRISE_STACK_ID"
+	stackIDEnvKey    = "BITRISEIO_STACK_ID"
 	appSlugEnvKey    = "BITRISE_APP_SLUG"
 	buildSlugEnvKey  = "BITRISE_BUILD_SLUG"
 	workflowName     = "BITRISE_TRIGGERED_WORKFLOW_TITLE"
