@@ -39,7 +39,7 @@ func sendAnalytics(source PayloadSource) error {
 	}
 
 	log.Infof("")
-	log.Infof("Submitting anonymized usage informations...")
+	log.Infof("Submitting anonymized usage information...")
 	log.Infof("For more information visit:")
 	log.Infof("https://github.com/bitrise-io/bitrise-plugins-analytics/blob/master/README.md")
 
