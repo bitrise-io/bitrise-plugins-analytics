@@ -222,6 +222,30 @@ func (a *Assertions) ErrorAsf(err error, target interface{}, msg string, args ..
 	return ErrorAsf(a.t, err, target, msg, args...)
 }
 
+// ErrorContains asserts that a function returned an error (i.e. not `nil`)
+// and that the error contains the specified substring.
+//
+//   actualObj, err := SomeFunction()
+//   a.ErrorContains(err,  expectedErrorSubString)
+func (a *Assertions) ErrorContains(theError error, contains string, msgAndArgs ...interface{}) bool {
+	if h, ok := a.t.(tHelper); ok {
+		h.Helper()
+	}
+	return ErrorContains(a.t, theError, contains, msgAndArgs...)
+}
+
+// ErrorContainsf asserts that a function returned an error (i.e. not `nil`)
+// and that the error contains the specified substring.
+//
+//   actualObj, err := SomeFunction()
+//   a.ErrorContainsf(err,  expectedErrorSubString, "error message %s", "formatted")
+func (a *Assertions) ErrorContainsf(theError error, contains string, msg string, args ...interface{}) bool {
+	if h, ok := a.t.(tHelper); ok {
+		h.Helper()
+	}
+	return ErrorContainsf(a.t, theError, contains, msg, args...)
+}
+
 // ErrorIs asserts that at least one of the errors in err's chain matches target.
 // This is a wrapper for errors.Is.
 func (a *Assertions) ErrorIs(err error, target error, msgAndArgs ...interface{}) bool {
@@ -871,6 +895,28 @@ func (a *Assertions) Lessf(e1 interface{}, e2 interface{}, msg string, args ...i
 	return Lessf(a.t, e1, e2, msg, args...)
 }
 
+// Negative asserts that the specified element is negative
+//
+//    a.Negative(-1)
+//    a.Negative(-1.23)
+func (a *Assertions) Negative(e interface{}, msgAndArgs ...interface{}) bool {
+	if h, ok := a.t.(tHelper); ok {
+		h.Helper()
+	}
+	return Negative(a.t, e, msgAndArgs...)
+}
+
+// Negativef asserts that the specified element is negative
+//
+//    a.Negativef(-1, "error message %s", "formatted")
+//    a.Negativef(-1.23, "error message %s", "formatted")
+func (a *Assertions) Negativef(e interface{}, msg string, args ...interface{}) bool {
+	if h, ok := a.t.(tHelper); ok {
+		h.Helper()
+	}
+	return Negativef(a.t, e, msg, args...)
+}
+
 // Never asserts that the given condition doesn't satisfy in waitFor time,
 // periodically checking the target function each tick.
 //
@@ -1281,6 +1327,28 @@ func (a *Assertions) Panicsf(f PanicTestFunc, msg string, args ...interface{}) b
 		h.Helper()
 	}
 	return Panicsf(a.t, f, msg, args...)
+}
+
+// Positive asserts that the specified element is positive
+//
+//    a.Positive(1)
+//    a.Positive(1.23)
+func (a *Assertions) Positive(e interface{}, msgAndArgs ...interface{}) bool {
+	if h, ok := a.t.(tHelper); ok {
+		h.Helper()
+	}
+	return Positive(a.t, e, msgAndArgs...)
+}
+
+// Positivef asserts that the specified element is positive
+//
+//    a.Positivef(1, "error message %s", "formatted")
+//    a.Positivef(1.23, "error message %s", "formatted")
+func (a *Assertions) Positivef(e interface{}, msg string, args ...interface{}) bool {
+	if h, ok := a.t.(tHelper); ok {
+		h.Helper()
+	}
+	return Positivef(a.t, e, msg, args...)
 }
 
 // Regexp asserts that a specified regexp matches a string.

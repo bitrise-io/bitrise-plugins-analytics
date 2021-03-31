@@ -280,6 +280,36 @@ func ErrorAsf(t TestingT, err error, target interface{}, msg string, args ...int
 	t.FailNow()
 }
 
+// ErrorContains asserts that a function returned an error (i.e. not `nil`)
+// and that the error contains the specified substring.
+//
+//   actualObj, err := SomeFunction()
+//   assert.ErrorContains(t, err,  expectedErrorSubString)
+func ErrorContains(t TestingT, theError error, contains string, msgAndArgs ...interface{}) {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	if assert.ErrorContains(t, theError, contains, msgAndArgs...) {
+		return
+	}
+	t.FailNow()
+}
+
+// ErrorContainsf asserts that a function returned an error (i.e. not `nil`)
+// and that the error contains the specified substring.
+//
+//   actualObj, err := SomeFunction()
+//   assert.ErrorContainsf(t, err,  expectedErrorSubString, "error message %s", "formatted")
+func ErrorContainsf(t TestingT, theError error, contains string, msg string, args ...interface{}) {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	if assert.ErrorContainsf(t, theError, contains, msg, args...) {
+		return
+	}
+	t.FailNow()
+}
+
 // ErrorIs asserts that at least one of the errors in err's chain matches target.
 // This is a wrapper for errors.Is.
 func ErrorIs(t TestingT, err error, target error, msgAndArgs ...interface{}) {
@@ -1112,6 +1142,34 @@ func Lessf(t TestingT, e1 interface{}, e2 interface{}, msg string, args ...inter
 	t.FailNow()
 }
 
+// Negative asserts that the specified element is negative
+//
+//    assert.Negative(t, -1)
+//    assert.Negative(t, -1.23)
+func Negative(t TestingT, e interface{}, msgAndArgs ...interface{}) {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	if assert.Negative(t, e, msgAndArgs...) {
+		return
+	}
+	t.FailNow()
+}
+
+// Negativef asserts that the specified element is negative
+//
+//    assert.Negativef(t, -1, "error message %s", "formatted")
+//    assert.Negativef(t, -1.23, "error message %s", "formatted")
+func Negativef(t TestingT, e interface{}, msg string, args ...interface{}) {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	if assert.Negativef(t, e, msg, args...) {
+		return
+	}
+	t.FailNow()
+}
+
 // Never asserts that the given condition doesn't satisfy in waitFor time,
 // periodically checking the target function each tick.
 //
@@ -1633,6 +1691,34 @@ func Panicsf(t TestingT, f assert.PanicTestFunc, msg string, args ...interface{}
 		h.Helper()
 	}
 	if assert.Panicsf(t, f, msg, args...) {
+		return
+	}
+	t.FailNow()
+}
+
+// Positive asserts that the specified element is positive
+//
+//    assert.Positive(t, 1)
+//    assert.Positive(t, 1.23)
+func Positive(t TestingT, e interface{}, msgAndArgs ...interface{}) {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	if assert.Positive(t, e, msgAndArgs...) {
+		return
+	}
+	t.FailNow()
+}
+
+// Positivef asserts that the specified element is positive
+//
+//    assert.Positivef(t, 1, "error message %s", "formatted")
+//    assert.Positivef(t, 1.23, "error message %s", "formatted")
+func Positivef(t TestingT, e interface{}, msg string, args ...interface{}) {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	if assert.Positivef(t, e, msg, args...) {
 		return
 	}
 	t.FailNow()
