@@ -1,4 +1,4 @@
-git addpackage models
+package models
 
 import (
 	"time"
