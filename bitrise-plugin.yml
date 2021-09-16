@@ -6,9 +6,9 @@ description: |-
 
   The sent data only contains information about steps (id, version, runtime, error), NO logs or other data is included.
 executable:
-  osx: https://github.com/bitrise-io/bitrise-plugins-analytics/releases/download/0.12.4/bitrise-plugins-analytics-Darwin-x86_64
-  osx-arm64: https://github.com/bitrise-io/bitrise-plugins-analytics/releases/download/0.12.4/bitrise-plugins-analytics-Darwin-arm64
-  linux: https://github.com/bitrise-io/bitrise-plugins-analytics/releases/download/0.12.4/bitrise-plugins-analytics-Linux-x86_64
+  osx: https://github.com/bitrise-io/bitrise-plugins-analytics/releases/download/0.12.5/bitrise-plugins-analytics-Darwin-x86_64
+  osx-arm64: https://github.com/bitrise-io/bitrise-plugins-analytics/releases/download/0.12.5/bitrise-plugins-analytics-Darwin-arm64
+  linux: https://github.com/bitrise-io/bitrise-plugins-analytics/releases/download/0.12.5/bitrise-plugins-analytics-Linux-x86_64
 trigger: DidFinishRun
 requirements:
 - tool: bitrise
