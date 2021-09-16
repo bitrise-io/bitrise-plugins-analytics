@@ -53,9 +53,18 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 	)
 
 	stepInputWhitelist := map[string]map[string]bool{
-		"xcode-test": map[string]bool{
-			"simulator_device":     true,
-			"simulator_os_version": true,
+		"xcode-test": {
+			"simulator_device":         true,
+			"simulator_os_version":     true,
+			"single_build":             true,
+			"should_build_before_test": true,
+		},
+		"ios-auto-provision-appstoreconnect": {
+			"connection":             true,
+			"min_profile_days_valid": true,
+		},
+		"ios-auto-provision": {
+			"min_profile_days_valid": true,
 		},
 	}
 
