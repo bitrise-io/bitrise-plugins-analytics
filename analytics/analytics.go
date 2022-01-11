@@ -59,8 +59,36 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 			"single_build":             true,
 			"should_build_before_test": true,
 		},
+		"xcode-archive": {
+			"distribution_method":    true,
+			"automatic_code_signing": true,
+			"register_test_devices":  true,
+			"min_profile_validity":   true,
+		},
+		"xcode-build-for-test": {
+			"automatic_code_signing": true,
+			"register_test_devices":  true,
+			"min_profile_validity":   true,
+		},
+		"export-xcarchive": {
+			"product":                true,
+			"distribution_method":    true,
+			"automatic_code_signing": true,
+			"register_test_devices":  true,
+			"min_profile_validity":   true,
+		},
+		"manage-ios-code-signing": {
+			"apple_service_connection": true,
+			"distribution_method":      true,
+			"sign_uitest_targets":      true,
+			"register_test_devices":    true,
+			"min_profile_validity":     true,
+		},
 		"ios-auto-provision-appstoreconnect": {
 			"connection":             true,
+			"distribution_type":      true,
+			"sign_uitest_targets":    true,
+			"register_test_devices":  true,
 			"min_profile_days_valid": true,
 		},
 		"ios-auto-provision": {
