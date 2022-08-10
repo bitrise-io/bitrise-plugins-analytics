@@ -4,7 +4,6 @@ import (
 	"time"
 )
 
-// BuildAnalytics ...
 type BuildAnalytics struct {
 	AppSlug      string `json:"app_slug" track:"app_slug"`
 	BuildSlug    string `json:"build_slug" track:"build_slug"`
@@ -22,17 +21,14 @@ type BuildAnalytics struct {
 	StepAnalytics []StepAnalytics `json:"step_analytics"`
 }
 
-// Event ...
 func (a BuildAnalytics) Event() string {
 	return "build_finished"
 }
 
-// Model ...
 func (a BuildAnalytics) Model() interface{} {
 	return a
 }
 
-// UserID ...
 func (a BuildAnalytics) UserID() string {
 	return a.AppSlug
 }

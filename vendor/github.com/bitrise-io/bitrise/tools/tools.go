@@ -13,14 +13,15 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/bitrise-io/bitrise/configs"
+	"github.com/bitrise-io/bitrise/tools/errorfinder"
 	"github.com/bitrise-io/bitrise/tools/filterwriter"
 	"github.com/bitrise-io/bitrise/tools/timeoutcmd"
 	envmanModels "github.com/bitrise-io/envman/models"
 	"github.com/bitrise-io/go-utils/command"
 	"github.com/bitrise-io/go-utils/errorutil"
 	"github.com/bitrise-io/go-utils/pathutil"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 )
 
@@ -40,6 +41,8 @@ func UnameGOARCH() (string, error) {
 	switch runtime.GOARCH {
 	case "amd64":
 		return "x86_64", nil
+	case "arm64":
+		return "arm64", nil
 	}
 	return "", fmt.Errorf("Unsupported architecture (%s)", runtime.GOARCH)
 }
@@ -276,7 +279,7 @@ func EnvmanInitAtPath(envstorePth string) error {
 }
 
 // EnvmanAdd ...
-func EnvmanAdd(envstorePth, key, value string, expand, skipIfEmpty bool) error {
+func EnvmanAdd(envstorePth, key, value string, expand, skipIfEmpty, sensitive bool) error {
 	logLevel := log.GetLevel().String()
 	args := []string{"--loglevel", logLevel, "--path", envstorePth, "add", "--key", key, "--append"}
 	if !expand {
@@ -284,6 +287,10 @@ func EnvmanAdd(envstorePth, key, value string, expand, skipIfEmpty bool) error {
 	}
 	if skipIfEmpty {
 		args = append(args, "--skip-if-empty")
+	}
+
+	if configs.IsSecretEnvsFiltering && sensitive {
+		args = append(args, "--sensitive")
 	}
 
 	envman := exec.Command("envman", args...)
@@ -316,7 +323,12 @@ func ExportEnvironmentsList(envstorePth string, envsList []envmanModels.Environm
 			skipIfEmpty = *opts.SkipIfEmpty
 		}
 
-		if err := EnvmanAdd(envstorePth, key, value, isExpand, skipIfEmpty); err != nil {
+		sensitive := envmanModels.DefaultIsSensitive
+		if opts.IsSensitive != nil {
+			sensitive = *opts.IsSensitive
+		}
+
+		if err := EnvmanAdd(envstorePth, key, value, isExpand, skipIfEmpty, sensitive); err != nil {
 			return err
 		}
 	}
@@ -360,7 +372,8 @@ func EnvmanRun(envstorePth,
 	workDirPth string,
 	cmdArgs []string,
 	timeout time.Duration,
-	secrets []envmanModels.EnvironmentItemModel,
+	noOutputTimeout time.Duration,
+	secrets []string,
 	stdInPayload []byte,
 ) (int, error) {
 	logLevel := log.GetLevel().String()
@@ -370,13 +383,15 @@ func EnvmanRun(envstorePth,
 	var inReader io.Reader
 	var outWriter io.Writer
 	var errWriter io.Writer
+	errorFinder := errorfinder.NewErrorFinder()
+	var fw *filterwriter.Writer
 
 	if !configs.IsSecretFiltering {
-		outWriter = os.Stdout
-		errWriter = os.Stderr
+		outWriter = errorFinder.WrapWriter(os.Stdout)
+		errWriter = errorFinder.WrapWriter(os.Stderr)
 	} else {
-
-		outWriter = filterwriter.New(GetSecretValues(secrets), os.Stdout)
+		fw = filterwriter.New(secrets, os.Stdout)
+		outWriter = errorFinder.WrapWriter(fw)
 		errWriter = outWriter
 	}
 
@@ -386,21 +401,22 @@ func EnvmanRun(envstorePth,
 	}
 
 	cmd := timeoutcmd.New(workDirPth, "envman", args...)
-	cmd.SetStandardIO(inReader, outWriter, errWriter)
 	cmd.SetTimeout(timeout)
+	cmd.SetHangTimeout(noOutputTimeout)
+	cmd.SetStandardIO(inReader, outWriter, errWriter)
 	cmd.AppendEnv("PWD=" + workDirPth)
 
 	err := cmd.Start()
 
 	// flush the writer anyway if the process is finished
 	if configs.IsSecretFiltering {
-		_, ferr := (outWriter.(*filterwriter.Writer)).Flush()
+		_, ferr := fw.Flush()
 		if ferr != nil {
-			return 1, ferr
+			return 1, errorFinder.WrapError(ferr)
 		}
 	}
 
-	return timeoutcmd.ExitStatus(err), err
+	return timeoutcmd.ExitStatus(err), errorFinder.WrapError(err)
 }
 
 // EnvmanJSONPrint ...
@@ -453,6 +469,7 @@ func MoveFile(oldpath, newpath string) error {
 func IsBuiltInFlagTypeKey(env string) bool {
 	switch string(env) {
 	case configs.IsSecretFilteringKey,
+		configs.IsSecretEnvsFilteringKey,
 		configs.CIModeEnvKey,
 		configs.PRModeEnvKey,
 		configs.DebugModeEnvKey,

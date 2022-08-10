@@ -8,19 +8,19 @@ import (
 )
 
 const (
-	// StepRunStatusCodeSuccess ...
-	StepRunStatusCodeSuccess = 0
-	// StepRunStatusCodeFailed ...
-	StepRunStatusCodeFailed = 1
-	// StepRunStatusCodeFailedSkippable ...
-	StepRunStatusCodeFailedSkippable = 2
-	// StepRunStatusCodeSkipped ...
-	StepRunStatusCodeSkipped = 3
-	// StepRunStatusCodeSkippedWithRunIf ...
-	StepRunStatusCodeSkippedWithRunIf = 4
+	StepRunStatusCodeSuccess           = 0
+	StepRunStatusCodeFailed            = 1
+	StepRunStatusCodeFailedSkippable   = 2
+	StepRunStatusCodeSkipped           = 3
+	StepRunStatusCodeSkippedWithRunIf  = 4
+	StepRunStatusCodePreparationFailed = 5
+	// StepRunStatusAbortedTimeout is used when a step times out due to a custom timeout
+	StepRunStatusAbortedTimeout = 7
+	// StepRunStatusAbortedNoOutputTimeout is used when a step times out due to no output received (hang)
+	StepRunStatusAbortedNoOutputTimeout = 8
 
 	// Version ...
-	Version = "11"
+	Version = "12"
 )
 
 // StepListItemModel ...
@@ -123,8 +123,16 @@ type StepIDData struct {
 	Version string
 }
 
+// BuildRunStartModel ...
+type BuildRunStartModel struct {
+	EventName   string    `json:"event_name" yaml:"event_name"`
+	ProjectType string    `json:"project_type" yaml:"project_type"`
+	StartTime   time.Time `json:"start_time" yaml:"start_time"`
+}
+
 // BuildRunResultsModel ...
 type BuildRunResultsModel struct {
+	EventName            string                `json:"event_name" yaml:"event_name"`
 	ProjectType          string                `json:"project_type" yaml:"project_type"`
 	StartTime            time.Time             `json:"start_time" yaml:"start_time"`
 	StepmanUpdates       map[string]int        `json:"stepman_updates" yaml:"stepman_updates"`

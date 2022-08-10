@@ -123,6 +123,18 @@ func ErrorAsf(t TestingT, err error, target interface{}, msg string, args ...int
 	return ErrorAs(t, err, target, append([]interface{}{msg}, args...)...)
 }
 
+// ErrorContainsf asserts that a function returned an error (i.e. not `nil`)
+// and that the error contains the specified substring.
+//
+//   actualObj, err := SomeFunction()
+//   assert.ErrorContainsf(t, err,  expectedErrorSubString, "error message %s", "formatted")
+func ErrorContainsf(t TestingT, theError error, contains string, msg string, args ...interface{}) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	return ErrorContains(t, theError, contains, append([]interface{}{msg}, args...)...)
+}
+
 // ErrorIsf asserts that at least one of the errors in err's chain matches target.
 // This is a wrapper for errors.Is.
 func ErrorIsf(t TestingT, err error, target error, msg string, args ...interface{}) bool {
@@ -441,6 +453,17 @@ func LessOrEqualf(t TestingT, e1 interface{}, e2 interface{}, msg string, args .
 	return LessOrEqual(t, e1, e2, append([]interface{}{msg}, args...)...)
 }
 
+// Negativef asserts that the specified element is negative
+//
+//    assert.Negativef(t, -1, "error message %s", "formatted")
+//    assert.Negativef(t, -1.23, "error message %s", "formatted")
+func Negativef(t TestingT, e interface{}, msg string, args ...interface{}) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	return Negative(t, e, append([]interface{}{msg}, args...)...)
+}
+
 // Neverf asserts that the given condition doesn't satisfy in waitFor time,
 // periodically checking the target function each tick.
 //
@@ -647,6 +670,17 @@ func PanicsWithValuef(t TestingT, expected interface{}, f PanicTestFunc, msg str
 	return PanicsWithValue(t, expected, f, append([]interface{}{msg}, args...)...)
 }
 
+// Positivef asserts that the specified element is positive
+//
+//    assert.Positivef(t, 1, "error message %s", "formatted")
+//    assert.Positivef(t, 1.23, "error message %s", "formatted")
+func Positivef(t TestingT, e interface{}, msg string, args ...interface{}) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	return Positive(t, e, append([]interface{}{msg}, args...)...)
+}
+
 // Regexpf asserts that a specified regexp matches a string.
 //
 //  assert.Regexpf(t, regexp.MustCompile("start"), "it's starting", "error message %s", "formatted")
@@ -700,6 +734,16 @@ func WithinDurationf(t TestingT, expected time.Time, actual time.Time, delta tim
 		h.Helper()
 	}
 	return WithinDuration(t, expected, actual, delta, append([]interface{}{msg}, args...)...)
+}
+
+// WithinRangef asserts that a time is within a time range (inclusive).
+//
+//   assert.WithinRangef(t, time.Now(), time.Now().Add(-time.Second), time.Now().Add(time.Second), "error message %s", "formatted")
+func WithinRangef(t TestingT, actual time.Time, start time.Time, end time.Time, msg string, args ...interface{}) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	return WithinRange(t, actual, start, end, append([]interface{}{msg}, args...)...)
 }
 
 // YAMLEqf asserts that two YAML strings are equivalent.
