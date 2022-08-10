@@ -15,7 +15,7 @@ builds:
   # We don't want to publish a linux-arm64 binary
   - goos: linux
     goarch: arm64
-  ldflags: [ ]
+  ldflags: []
 
 archives:
   # GitHub release should contain the raw binaries (no zip or tar.gz)
