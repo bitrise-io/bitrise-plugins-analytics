@@ -4,7 +4,6 @@ import (
 	"time"
 )
 
-// StepAnalytics ...
 type StepAnalytics struct {
 	// connect step analytics to Bitrise builds
 	AppSlug   string `json:"-"`
@@ -21,17 +20,14 @@ type StepAnalytics struct {
 	Runtime   time.Duration `json:"run_time" track:"run_time"`
 }
 
-// Event ...
 func (a StepAnalytics) Event() string {
 	return "step_finished"
 }
 
-// Model ...
 func (a StepAnalytics) Model() interface{} {
 	return a
 }
 
-// UserID ...
 func (a StepAnalytics) UserID() string {
 	return a.AppSlug
 }
