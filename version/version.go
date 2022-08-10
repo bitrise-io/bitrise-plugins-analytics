@@ -1,4 +1,4 @@
 package version
 
 // VERSION ...
-const VERSION = "0.12.6"
+var VERSION = "0.0.0-development"

@@ -1,71 +1,42 @@
-format_version: 6
+format_version: 11
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
-app:
-  envs:
-  - BIN_NAME: bitrise-plugins-analytics
-
 workflows:
-
   test:
     steps:
-    - go-list:
-    - golint:
-    - errcheck:
-    - go-test:
+    - go-list: { }
+    - golint: { }
+    - errcheck: { }
+    - go-test: { }
 
-  create_binaries:
-    title: Create binaries
-    description: |
-        Creates Linux and Darwin binaries
+  create-release:
+    description: Creates Linux and Darwin binaries, then publishes a GitHub release
+    envs:
+    - GITHUB_TOKEN: $GIT_BOT_USER_ACCESS_TOKEN  # Goreleaser expects this env var
     steps:
     - script:
-        title: create Linux and macOS (Darwin) bins, with version infos
+        title: Goreleaser (create binaries + publish to GH)
+        deps:
+          brew:
+          - name: goreleaser
         inputs:
-        - content: |-
-            #!/bin/bash
+        - content: |
+            #!/usr/bin/env bash
             set -ex
 
-            export ARCH=x86_64
-            export GOARCH=amd64
-            version_package="github.com/bitrise-io/bitrise-plugins-analytics/version"
+            goreleaser release
 
-            # Create Darwin bin
-            export OS=Darwin
-            export GOOS=darwin
-            binary_path="_bin/${BIN_NAME}-${OS}-${ARCH}"
-
-            go build \
-              -ldflags "-X ${version_package}.BuildNumber=${BITRISE_BUILD_NUMBER} -X ${version_package}.Commit=${GIT_CLONE_COMMIT_HASH}" \
-              -o "${binary_path}"
-
-            cp "${binary_path}" "${BITRISE_DEPLOY_DIR}/${BIN_NAME}-${OS}-${ARCH}"
-            envman add --key OSX_BIN_NAME --value "${BIN_NAME}-${OS}-${ARCH}"
-
-
-            # Create Linux binary
-            export OS=Linux
-            export GOOS=linux
-            binary_path="_bin/${BIN_NAME}-${OS}-${ARCH}"
-
-            go build \
-              -ldflags "-X ${version_package}.BuildNumber=${BITRISE_BUILD_NUMBER} -X ${version_package}.Commit=${git_commit_hash}" \
-              -o "${binary_path}"
-
-            cp "${binary_path}" "${BITRISE_DEPLOY_DIR}/${BIN_NAME}-${OS}-${ARCH}"
-            envman add --key LINUX_BIN_NAME --value "${BIN_NAME}-${OS}-${ARCH}"
-
-  deps-update:
-    title: Dep update
-    description: |
-      Used for updating bitrise dependencies with dep
+  test-binary-build:
+    description: Tests the release build process by creating a snapshot release (without publishing)
     steps:
     - script:
-        title: Dependency update
+        title: Goreleaser (create snapshot binaries)
+        deps:
+          brew:
+          - name: goreleaser
         inputs:
-        - content: |-
-            #!/bin/bash
+        - content: |
+            #!/usr/bin/env bash
             set -ex
-            go get -u -v github.com/golang/dep/cmd/dep
-            dep ensure -v
-            dep ensure -v -update
+
+            goreleaser release --snapshot --rm-dist
