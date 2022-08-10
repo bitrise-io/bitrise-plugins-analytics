@@ -15,8 +15,7 @@ builds:
   # We don't want to publish a linux-arm64 binary
   - goos: linux
     goarch: arm64
-  ldflags:
-  - -X github.com/bitrise-io/bitrise-plugins-analytics/version.VERSION={{ .Version }}
+  ldflags: [ ]
 
 archives:
   # GitHub release should contain the raw binaries (no zip or tar.gz)
