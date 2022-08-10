@@ -4,10 +4,9 @@ default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 workflows:
   test:
     steps:
-    - go-list: { }
-    - golint: { }
-    - errcheck: { }
-    - go-test: { }
+    - git::https://github.com/bitrise-steplib/steps-check.git:
+        inputs:
+        - skip_step_yml_validation: "yes"
 
   create-release:
     description: Creates Linux and Darwin binaries, then publishes a GitHub release
