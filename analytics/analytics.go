@@ -25,7 +25,7 @@ const (
 	buildSlugEnvKey  = "BITRISE_BUILD_SLUG"
 	workflowName     = "BITRISE_TRIGGERED_WORKFLOW_TITLE"
 	repoSlug         = "BITRISEIO_GIT_REPOSITORY_SLUG"
-	analyticsBaseURL = "https://bitrise-step-analytics.herokuapp.com"
+	analyticsBaseURL = "https://step-analytics.bitrise.io"
 )
 
 func buildStatus(buildFailed bool) string {
