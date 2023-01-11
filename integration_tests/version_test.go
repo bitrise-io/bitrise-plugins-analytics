@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	expectedVersion = "0.12.7"
+	expectedVersion = "0.13.0"
 )
 
 func Test_VersionTest(t *testing.T) {

@@ -2,3 +2,4 @@ _bin/
 _tmp/
 .gows*
 bitrise-plugins-analytics
+.idea/
