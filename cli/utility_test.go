@@ -100,8 +100,8 @@ func TestFormat(t *testing.T) {
 		t.Fatalf("Failed to find model version in %s using regex: %s", modelsPth, pattern)
 	}
 
-	if match[1] != models.Version {
-		t.Errorf("Latest Bitrise Model's version: %s, embedded Model's version: %s", match[1], models.Version)
+	if match[1] != models.FormatVersion {
+		t.Errorf("Latest Bitrise Model's version: %s, embedded Model's version: %s", match[1], models.FormatVersion)
 		t.Fatal("Update go dependencies to fetch latest bitrise/models package")
 	}
 }

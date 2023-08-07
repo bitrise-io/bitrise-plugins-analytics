@@ -17,7 +17,7 @@ func isAnalyticsEnabled() (bool, error) {
 	return !config.IsAnalyticsDisabled, nil
 }
 
-// minBitriseCLIVersion points to the version of Bitrise CLI introduceses Bitrise plugins.
+// minBitriseCLIVersion points to the version of Bitrise CLI introduces Bitrise plugins.
 const minBitriseCLIVersion = "1.6.0"
 
 func checkFormatVersion(pluginFormatVersionStr, hostBitriseFormatVersionStr string) (string, error) {
