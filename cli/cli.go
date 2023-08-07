@@ -54,7 +54,7 @@ func action(c *cli.Context) {
 		return
 	}
 
-	if warn, err := checkFormatVersion(os.Getenv(plugins.PluginConfigFormatVersionKey), models.Version); err != nil {
+	if warn, err := checkFormatVersion(os.Getenv(plugins.PluginConfigFormatVersionKey), models.FormatVersion); err != nil {
 		failf(err.Error())
 	} else if len(warn) > 0 {
 		log.Warnf(warn)

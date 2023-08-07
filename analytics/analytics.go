@@ -32,14 +32,14 @@ func buildStatus(buildFailed bool) string {
 	return map[bool]string{false: "successful", true: "failed"}[buildFailed]
 }
 
-func stepStatus(i int) string {
-	if status, ok := map[int]string{
+func stepStatus(status models.StepRunStatus) string {
+	if status, ok := map[models.StepRunStatus]string{
 		models.StepRunStatusCodeFailed:           "failed",
 		models.StepRunStatusCodeSuccess:          "success",
 		models.StepRunStatusCodeSkipped:          "skipped",
 		models.StepRunStatusCodeFailedSkippable:  "failed_skippable",
 		models.StepRunStatusCodeSkippedWithRunIf: "skipped_with_runif",
-	}[i]; ok {
+	}[status]; ok {
 		return status
 	}
 	return "unknown"
