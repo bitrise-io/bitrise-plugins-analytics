@@ -10,7 +10,7 @@ github.com/bitrise-io/bitrise/plugins
 github.com/bitrise-io/bitrise/tools
 github.com/bitrise-io/bitrise/utils
 github.com/bitrise-io/bitrise/version
-# github.com/bitrise-io/bitrise-step-analytics v0.0.0-20220404161005-4029a0fbac67
+# github.com/bitrise-io/bitrise-step-analytics v0.0.0-20230228150911-6c69646b2e3a
 ## explicit; go 1.17
 github.com/bitrise-io/bitrise-step-analytics/models
 # github.com/bitrise-io/colorstring v0.0.0-20180614154802-a8cd70115192

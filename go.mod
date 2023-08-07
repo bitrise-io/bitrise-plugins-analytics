@@ -1,10 +1,10 @@
 module github.com/bitrise-io/bitrise-plugins-analytics
 
-go 1.17
+go 1.18
 
 require (
 	github.com/bitrise-io/bitrise v0.0.0-20230807085445-490dd34633ca
-	github.com/bitrise-io/bitrise-step-analytics v0.0.0-20220404161005-4029a0fbac67
+	github.com/bitrise-io/bitrise-step-analytics v0.0.0-20230228150911-6c69646b2e3a
 	github.com/bitrise-io/go-utils v1.0.9
 	github.com/bitrise-io/stepman v0.0.0-20230728094915-939f0fe5c19a
 	github.com/hashicorp/go-version v1.6.0

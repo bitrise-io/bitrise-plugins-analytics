@@ -1,8 +1,8 @@
 github.com/BurntSushi/toml v1.3.2/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/bitrise-io/bitrise v0.0.0-20230807085445-490dd34633ca h1:4WRbgdi3x22uVdYMw7a9rPoCQsonKYeqUH+TIJkufUQ=
 github.com/bitrise-io/bitrise v0.0.0-20230807085445-490dd34633ca/go.mod h1:WcWeEnuP6x54mUVw9L9pGUmllo67aqtXGr+pBIWv+4A=
-github.com/bitrise-io/bitrise-step-analytics v0.0.0-20220404161005-4029a0fbac67 h1:Oyk204SttQdn/hPXMnbzSJlr/FUBXMT5+4aXOOYoVLU=
-github.com/bitrise-io/bitrise-step-analytics v0.0.0-20220404161005-4029a0fbac67/go.mod h1:+6aI2qH0R0xGnb7qTMs40/ibQ9yiE388gbspAaxeOF8=
+github.com/bitrise-io/bitrise-step-analytics v0.0.0-20230228150911-6c69646b2e3a h1:VJygCeH7NaK8HTOWKxOQQgeFqk0VShfXyq/IaczY+FU=
+github.com/bitrise-io/bitrise-step-analytics v0.0.0-20230228150911-6c69646b2e3a/go.mod h1:+6aI2qH0R0xGnb7qTMs40/ibQ9yiE388gbspAaxeOF8=
 github.com/bitrise-io/colorstring v0.0.0-20180614154802-a8cd70115192 h1:vSHYT6kCL/iOT9BVuUPm0tVcbW57r5zldLWg0aB7qbQ=
 github.com/bitrise-io/colorstring v0.0.0-20180614154802-a8cd70115192/go.mod h1:CIHVcxZUvsG99XUJV6JlR7okNsMMGY81jMvPC20W+O0=
 github.com/bitrise-io/envman v0.0.0-20230802102824-1300c57d49c4 h1:idT9p2ISMoW5SOz2ow3jWzxVNc4DkNreLeoTk8BGPHg=
