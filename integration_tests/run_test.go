@@ -90,7 +90,7 @@ func TestStdinPayload(t *testing.T) {
 			bitriseConfigs.CIModeEnvKey + "=false",
 
 			plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
-			plugins.PluginConfigFormatVersionKey + "=" + models.Version,
+			plugins.PluginConfigFormatVersionKey + "=" + models.FormatVersion,
 		}
 
 		cmd := command.New(binPth)
@@ -110,7 +110,7 @@ func TestStdinPayload(t *testing.T) {
 			bitriseConfigs.CIModeEnvKey + "=false",
 
 			plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
-			plugins.PluginConfigFormatVersionKey + "=" + models.Version,
+			plugins.PluginConfigFormatVersionKey + "=" + models.FormatVersion,
 		}
 
 		cmd := command.New(binPth)
@@ -132,7 +132,7 @@ func TestEnvPayload(t *testing.T) {
 			bitriseConfigs.CIModeEnvKey + "=false",
 
 			plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
-			plugins.PluginConfigFormatVersionKey + "=" + models.Version,
+			plugins.PluginConfigFormatVersionKey + "=" + models.FormatVersion,
 			configs.PluginConfigPayloadKey + "=" + successBuildPayload,
 		}
 
@@ -152,7 +152,7 @@ func TestEnvPayload(t *testing.T) {
 			bitriseConfigs.CIModeEnvKey + "=false",
 
 			plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
-			plugins.PluginConfigFormatVersionKey + "=" + models.Version,
+			plugins.PluginConfigFormatVersionKey + "=" + models.FormatVersion,
 			configs.PluginConfigPayloadKey + "=" + failedBuildPayload,
 		}
 
@@ -172,7 +172,7 @@ func TestNoPayloadReportsError(t *testing.T) {
 		bitriseConfigs.CIModeEnvKey + "=false",
 
 		plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
-		plugins.PluginConfigFormatVersionKey + "=" + models.Version,
+		plugins.PluginConfigFormatVersionKey + "=" + models.FormatVersion,
 	}
 
 	cmd := command.New(binPth)
@@ -191,7 +191,7 @@ func TestZeroLengthPayloadReportsError(t *testing.T) {
 		bitriseConfigs.CIModeEnvKey + "=false",
 
 		plugins.PluginConfigPluginModeKey + "=" + string(plugins.TriggerMode),
-		plugins.PluginConfigFormatVersionKey + "=" + models.Version,
+		plugins.PluginConfigFormatVersionKey + "=" + models.FormatVersion,
 	}
 
 	cmd := command.New(binPth)

@@ -34,11 +34,11 @@ func buildStatus(buildFailed bool) string {
 
 func stepStatus(i int) string {
 	if status, ok := map[int]string{
-		models.StepRunStatusCodeFailed:           "failed",
-		models.StepRunStatusCodeSuccess:          "success",
-		models.StepRunStatusCodeSkipped:          "skipped",
-		models.StepRunStatusCodeFailedSkippable:  "failed_skippable",
-		models.StepRunStatusCodeSkippedWithRunIf: "skipped_with_runif",
+		int(models.StepRunStatusCodeFailed):           "failed",
+		int(models.StepRunStatusCodeSuccess):          "success",
+		int(models.StepRunStatusCodeSkipped):          "skipped",
+		int(models.StepRunStatusCodeFailedSkippable):  "failed_skippable",
+		int(models.StepRunStatusCodeSkippedWithRunIf): "skipped_with_runif",
 	}[i]; ok {
 		return status
 	}
@@ -110,7 +110,7 @@ func SendAnonymizedAnalytics(buildRunResults models.BuildRunResultsModel) error 
 			StepVersion: stepResult.StepInfo.Version,
 			StepSource:  pointers.StringWithDefault(stepResult.StepInfo.Step.SourceCodeURL, ""),
 			StepInputs:  filteredStepInputs,
-			Status:      stepStatus(stepResult.Status),
+			Status:      stepStatus(int(stepResult.Status)),
 			Runtime:     stepResult.RunTime,
 			StartTime:   stepResult.StartTime,
 		}), runtime+stepResult.RunTime
