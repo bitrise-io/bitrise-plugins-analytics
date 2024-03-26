@@ -11,38 +11,27 @@ import (
 )
 
 var (
-	// InputEnvstorePath ...
-	InputEnvstorePath string
-	// OutputEnvstorePath ...
-	OutputEnvstorePath string
-	// FormattedOutputPath ...
-	FormattedOutputPath string
-	// BitriseWorkDirPath ...
-	BitriseWorkDirPath string
-	// BitriseWorkStepsDirPath ...
+	InputEnvstorePath       string
+	OutputEnvstorePath      string
+	FormattedOutputPath     string
+	BitriseWorkDirPath      string
 	BitriseWorkStepsDirPath string
-	// CurrentDir ...
-	CurrentDir string
+	CurrentDir              string
 )
 
 const (
-	// EnvstorePathEnvKey ...
-	EnvstorePathEnvKey = "ENVMAN_ENVSTORE_PATH"
-	// FormattedOutputPathEnvKey ...
-	FormattedOutputPathEnvKey = "BITRISE_STEP_FORMATTED_OUTPUT_FILE_PATH"
-	// BitriseSourceDirEnvKey ...
-	BitriseSourceDirEnvKey = "BITRISE_SOURCE_DIR"
-	// BitriseDeployDirEnvKey ...
-	BitriseDeployDirEnvKey = "BITRISE_DEPLOY_DIR"
-	// BitriseTestDeployDirEnvKey is the root directory of test reports
+	EnvstorePathEnvKey         = "ENVMAN_ENVSTORE_PATH"
+	FormattedOutputPathEnvKey  = "BITRISE_STEP_FORMATTED_OUTPUT_FILE_PATH"
+	BitriseDataHomeDirEnvKey   = "BITRISE_DATA_HOME_DIR"
+	BitriseSourceDirEnvKey     = "BITRISE_SOURCE_DIR"
+	BitriseDeployDirEnvKey     = "BITRISE_DEPLOY_DIR"
 	BitriseTestDeployDirEnvKey = "BITRISE_TEST_DEPLOY_DIR"
+
 	// BitrisePerStepTestResultDirEnvKey is a unique subdirectory in BITRISE_TEST_DEPLOY_DIR for each step run, steps should place test reports and attachments into this directory
 	BitrisePerStepTestResultDirEnvKey = "BITRISE_TEST_RESULT_DIR"
-	// BitriseTmpDirEnvKey ...
-	BitriseTmpDirEnvKey = "BITRISE_TMP_DIR"
+	BitriseHtmlReportDirEnvKey        = "BITRISE_HTML_REPORT_DIR"
 )
 
-// GetBitriseHomeDirPath ...
 func GetBitriseHomeDirPath() string {
 	return filepath.Join(pathutil.UserHomeDir(), ".bitrise")
 }
@@ -51,12 +40,10 @@ func getBitriseConfigFilePath() string {
 	return filepath.Join(GetBitriseHomeDirPath(), bitriseConfigFileName)
 }
 
-// GetBitriseToolsDirPath ...
 func GetBitriseToolsDirPath() string {
 	return filepath.Join(GetBitriseHomeDirPath(), "tools")
 }
 
-// GetBitriseToolkitsDirPath ...
 func GetBitriseToolkitsDirPath() string {
 	return filepath.Join(GetBitriseHomeDirPath(), "toolkits")
 }
@@ -91,7 +78,6 @@ func initBitriseWorkPaths() error {
 	return nil
 }
 
-// GeneratePATHEnvString ...
 func GeneratePATHEnvString(currentPATHEnv, pathToInclude string) string {
 	if currentPATHEnv == "" {
 		return pathToInclude
@@ -111,10 +97,9 @@ func GeneratePATHEnvString(currentPATHEnv, pathToInclude string) string {
 	return pthWithPathIncluded
 }
 
-// InitPaths ...
 func InitPaths() error {
 	if err := initBitriseWorkPaths(); err != nil {
-		return fmt.Errorf("Failed to init bitrise paths, error: %s", err)
+		return fmt.Errorf("init bitrise paths: %s", err)
 	}
 
 	// --- Bitrise TOOLS
@@ -177,6 +162,18 @@ func InitPaths() error {
 		}
 	}
 
+	// BITRISE_HTML_REPORT_DIR
+	if os.Getenv(BitriseHtmlReportDirEnvKey) == "" {
+		reportDir, err := pathutil.NormalizedOSTempDirPath("html-reports")
+		if err != nil {
+			return fmt.Errorf("Failed to create html-reports dir, error: %s", err)
+		}
+
+		if err := os.Setenv(BitriseHtmlReportDirEnvKey, reportDir); err != nil {
+			return fmt.Errorf("Failed to set BITRISE_HTML_REPORT_DIR, error: %s", err)
+		}
+	}
+
 	// BITRISE_TEST_RESULTS_DIR
 	if os.Getenv(BitriseTestDeployDirEnvKey) == "" {
 		testsDir, err := pathutil.NormalizedOSTempDirPath("test_results")
@@ -186,18 +183,6 @@ func InitPaths() error {
 
 		if err := os.Setenv(BitriseTestDeployDirEnvKey, testsDir); err != nil {
 			return fmt.Errorf("Failed to set %s, error: %s", BitriseTestDeployDirEnvKey, err)
-		}
-	}
-
-	//BITRISE_TMP_DIR
-	if os.Getenv(BitriseTmpDirEnvKey) == "" {
-		tmpDir, err := pathutil.NormalizedOSTempDirPath("tmp")
-		if err != nil {
-			return fmt.Errorf("Failed to set tmp dir, error: %s", err)
-		}
-
-		if err := os.Setenv(BitriseTmpDirEnvKey, tmpDir); err != nil {
-			return fmt.Errorf("Failed to set BITRISE_TMP_DIR, error: %s", err)
 		}
 	}
 
